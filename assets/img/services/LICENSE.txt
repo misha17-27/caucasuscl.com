@@ -1,0 +1,22 @@
+Xidmət şəkilləri — Unsplash
+===========================
+
+Bu qovluqdakı 7 şəkil Unsplash-dən götürülüb.
+Unsplash License: kommersiya məqsədilə pulsuz istifadəyə icazə verir,
+istinad (attribution) tələb olunmur.
+https://unsplash.com/license
+
+Şəkil ID-ləri (unsplash.com/photos/<id> ünvanında baxmaq olar):
+
+gomruk-beyannameleri.jpg       photo-1564846824194-346b7871b855
+idxal-ixrac-senedleri.jpg      photo-1562564055-71e051d33c19
+sertifikatlar-ve-icazeler.jpg  photo-1619418602850-35ad20aa1700
+yuklerin-catdirilmasi.jpg      photo-1714627798569-b3e36d409c4b
+logistika-xidmetleri.jpg       photo-1759272840538-ae4b07214c71
+konsaltinq-xidmeti.jpg         photo-1758518731462-d091b0b4ed0d
+konsiqnasiya-xidmetleri.jpg    photo-1587293852726-70cdb56c2866
+
+idxal-ixrac-senedleri.jpg — crop=left ilə kadrlanıb (sağdakı boş sahə azaldılıb).
+
+Ölçü: 1600x1000 (16:10), keyfiyyət 80.
+Köhnə şəkillər silinməyib — assets/img/2022/08/ və assets/img/kon.jpg.

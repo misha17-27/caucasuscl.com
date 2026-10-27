@@ -1,0 +1,13 @@
+# Serverə LF ilə düşsün — .htaccess və PHP fayllarında CRLF problem yaradır.
+* text=auto eol=lf
+
+# İkili fayllara toxunulmasın
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.ico  binary
+*.svg  text eol=lf
+*.woff  binary
+*.woff2 binary
+*.sqlite binary

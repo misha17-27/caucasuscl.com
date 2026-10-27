@@ -1,0 +1,180 @@
+# ---------------------------------------------------------------
+# Caucasus Customs and Logistics
+# Ünvan sxemi orijinal caucasuscl.com ilə eynidir (bax includes/routes.php)
+#   AZ  /  /haqqimizda/  /xidmetler/  /xidmetler/<slug>/  /gomruk-xeberleri/  /<xeber>/  /elaqe/
+#   RU  /ru/  /ru/o-nas/  /ru/uslugi/  /ru/xidmetler/<slug>/  /ru/novosti/  /ru/kontakty/
+#   EN  /en/  /en/about-us/  /en/services/  /en/services/<slug>/  /en/news/  /en/contact/
+# ---------------------------------------------------------------
+
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # RewriteBase /            # alt qovluqda yerləşdirsəniz açın
+
+    # İstifadə olunmayan HTTP metodları (XST və s.) bağlıdır
+    RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK|CONNECT|PUT|DELETE|PATCH)$ [NC]
+    RewriteRule .* - [F,L]
+
+    # Ünvanda açıq inyeksiya cəhdləri
+    RewriteCond %{QUERY_STRING} (\.\./|<script|%3Cscript|base64_decode\(|union[\s+]+select) [NC]
+    RewriteRule .* - [F,L]
+
+    # Şablon və baza qovluqları birbaşa açılmır (statik ötürmədən ƏVVƏL)
+    RewriteRule ^(includes|storage)(/|$) - [F,L]
+
+    # Mövcud fayl və qovluqlar (admin, assets) toxunulmaz
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Kanonik: sonda slash olsun (orijinal sayt kimi)
+    RewriteCond %{REQUEST_URI} !^/$
+    RewriteCond %{REQUEST_URI} !\.[a-zA-Z0-9]{2,5}$
+    RewriteCond %{REQUEST_URI} !/$
+    RewriteRule ^(.*)$ /$1/ [R=301,L]
+
+    # ---------- WordPress-dən qalan ünvanlar ----------
+    # Köhnə saytdan indeksdə qalan yüzlərlə ünvan var. Uyğun məzmun varsa
+    # 301 veririk, yoxdursa 404/410 — hər ikisi Google üçün düzgün siqnaldır.
+
+    # Sorğu parametrli köhnə ünvanlar (?p=12, ?cat=3, ?s=...) — dublikat yaradır
+    RewriteCond %{QUERY_STRING} (^|&)(p|page_id|cat|tag|m|attachment_id|author|s|feed|replytocom)=([^&]*) [NC]
+    RewriteRule ^$ /? [R=301,L]
+
+    # Xəbər arxivinin səhifələnməsi: /gomruk-xeberleri/2/ və /page/2/
+    RewriteRule ^(gomruk-xeberleri|xeberler)/(page/)?[0-9]+/?$  /gomruk-xeberleri/   [R=301,L]
+    RewriteRule ^ru/(novosti|xeberler)/(page/)?[0-9]+/?$        /ru/novosti/         [R=301,L]
+    RewriteRule ^en/(news|xeberler)/(page/)?[0-9]+/?$           /en/news/            [R=301,L]
+    RewriteRule ^page/[0-9]+/?$                                 /                    [R=301,L]
+
+    # Lentlər (RSS)
+    RewriteRule ^(.+/)?feed/?$          /gomruk-xeberleri/ [R=301,L]
+    RewriteRule ^(rss|rss2|atom)/?$     /gomruk-xeberleri/ [R=301,L]
+
+    # Kateqoriya, etiket və müəllif arxivləri
+    RewriteRule ^(category|tag|etiket)/.*$   /gomruk-xeberleri/ [R=301,L]
+    RewriteRule ^author/.*$                  /haqqimizda/       [R=301,L]
+
+    # WordPress-in texniki ünvanları — məzmun deyil, birbaşa "silinib"
+    RewriteRule ^wp-json(/.*)?$                          - [G,L]
+    RewriteRule ^wp-(admin|includes)(/.*)?$              - [G,L]
+    RewriteRule ^wp-content/(themes|plugins|cache)(/.*)?$ - [G,L]
+
+    # ---------- sitemap ----------
+    RewriteRule ^sitemap\.xml$                   sitemap.php           [L]
+    RewriteRule ^sitemap_index\.xml$             sitemap.php?index=1   [L]
+    # Yoast-ın alt-sitemap ünvanları -> əsas sitemap
+    RewriteRule ^[a-z_-]+-sitemap[0-9]*\.xml$    /sitemap.xml [R=301,L]
+
+    # ---------- köhnə ünvanlar -> yeni sxem (router.php ilə eyni) ----------
+    RewriteRule ^category/xeberler/?$            /gomruk-xeberleri/ [R=301,L]
+    RewriteRule ^xeberler/?$                     /gomruk-xeberleri/ [R=301,L]
+    RewriteRule ^linkler/?$                      /faydali-linkler/  [R=301,L]
+    RewriteRule ^xeberler/([a-z0-9-]+)/?$        /$1/               [R=301,L]
+
+    RewriteRule ^ru/category/xeberler/?$         /ru/novosti/          [R=301,L]
+    RewriteRule ^ru/xeberler/?$                  /ru/novosti/          [R=301,L]
+    RewriteRule ^ru/linkler/?$                   /ru/poleznye-ssylki/  [R=301,L]
+    RewriteRule ^ru/xeberler/([a-z0-9-]+)/?$     /ru/novosti/$1/       [R=301,L]
+
+    RewriteRule ^en/category/xeberler/?$         /en/news/         [R=301,L]
+    RewriteRule ^en/xeberler/?$                  /en/news/         [R=301,L]
+    RewriteRule ^en/linkler/?$                   /en/useful-links/ [R=301,L]
+    RewriteRule ^en/xeberler/([a-z0-9-]+)/?$     /en/news/$1/      [R=301,L]
+
+    # ---------- EN ----------
+    RewriteRule ^en/?$                           index.php       [L]
+    RewriteRule ^en/about-us/?$                  haqqimizda.php  [L]
+    RewriteRule ^en/services/?$                  xidmetler.php   [L]
+    RewriteRule ^en/services/([a-z0-9-]+)/?$     xidmet.php?slug=$1 [L,QSA]
+    RewriteRule ^en/news/?$                      xeberler.php    [L]
+    RewriteRule ^en/news/([a-z0-9-]+)/?$         xeber.php?slug=$1  [L,QSA]
+    RewriteRule ^en/contact/?$                   elaqe.php       [L]
+    RewriteRule ^en/useful-links/?$              linkler.php     [L]
+
+    # ---------- RU ----------
+    RewriteRule ^ru/?$                           index.php       [L]
+    RewriteRule ^ru/o-nas/?$                     haqqimizda.php  [L]
+    RewriteRule ^ru/uslugi/?$                    xidmetler.php   [L]
+    RewriteRule ^ru/xidmetler/([a-z0-9-]+)/?$    xidmet.php?slug=$1 [L,QSA]
+    RewriteRule ^ru/novosti/?$                   xeberler.php    [L]
+    RewriteRule ^ru/novosti/([a-z0-9-]+)/?$      xeber.php?slug=$1  [L,QSA]
+    RewriteRule ^ru/kontakty/?$                  elaqe.php       [L]
+    RewriteRule ^ru/poleznye-ssylki/?$           linkler.php     [L]
+
+    # ---------- AZ ----------
+    RewriteRule ^haqqimizda/?$                   haqqimizda.php  [L]
+    RewriteRule ^xidmetler/?$                    xidmetler.php   [L]
+    RewriteRule ^xidmetler/([a-z0-9-]+)/?$       xidmet.php?slug=$1 [L,QSA]
+    RewriteRule ^gomruk-xeberleri/?$             xeberler.php    [L]
+    RewriteRule ^elaqe/?$                        elaqe.php       [L]
+    RewriteRule ^faydali-linkler/?$              linkler.php     [L]
+
+    # AZ xəbərləri kökdə — ən sonda, qalan hər şeyi tutur
+    RewriteRule ^([a-z0-9-]{6,})/?$              xeber.php?slug=$1 [L,QSA]
+</IfModule>
+
+ErrorDocument 404 /404.php
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css               "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/jpeg             "access plus 6 months"
+    ExpiresByType image/png              "access plus 6 months"
+    ExpiresByType image/svg+xml          "access plus 6 months"
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript image/svg+xml
+</IfModule>
+
+# Baza, log, məlumat və ehtiyat nüsxə faylları bağlıdır
+<FilesMatch "\.(log|sqlite|sqlite-wal|sqlite-shm|bak|bak2|json|sql|zip|md)$">
+    Require all denied
+</FilesMatch>
+
+# Gizli fayllar (.git, .env, .htaccess...)
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# ---------------------------------------------------------------
+# TƏHLÜKƏSİZLİK BAŞLIQLARI
+# ---------------------------------------------------------------
+<IfModule mod_headers.c>
+    # MIME növünün təxmin edilməsi bağlıdır
+    Header always set X-Content-Type-Options "nosniff"
+    # Saytın başqa domendə çərçivəyə salınması (clickjacking) bağlıdır
+    Header always set X-Frame-Options "SAMEORIGIN"
+    # Referer yalnız eyni mənşəyə tam gedir
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    # İstifadə olunmayan brauzer imkanları söndürülür
+    Header always set Permissions-Policy "geolocation=(), camera=(), microphone=(), payment=(), usb=(), interest-cohort=()"
+    Header always set Cross-Origin-Opener-Policy "same-origin"
+    Header always set X-Permitted-Cross-Domain-Policies "none"
+
+    # Content-Security-Policy
+    #   script-src: yalnız öz faylarımız + Turnstile ('unsafe-inline' YOXDUR)
+    #   style-src : inline style="..." atributları işlədilir, ona görə 'unsafe-inline'
+    #   frame-src : YouTube (xəbər videoları), Google Maps (əlaqə), Turnstile
+    #   static.cloudflareinsights.com — Cloudflare-in statistika beacon-u
+    #   googletagmanager.com + google-analytics.com — Google Analytics 4
+    #   'unsafe-eval' — Turnstile-in yoxlama mühərriki eval işlədir; onsuz
+    #   kapça ümumiyyətlə görünmür. Skript mənbələri yalnız etibarlı
+    #   domenlərdir və script-src-də 'unsafe-inline' YOXDUR.
+    Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; form-action 'self'; script-src 'self' 'unsafe-eval' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com; frame-src https://challenges.cloudflare.com https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com https://maps.google.com; worker-src 'self' blob:; connect-src 'self' https://challenges.cloudflare.com https://cloudflareinsights.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://stats.g.doubleclick.net; upgrade-insecure-requests"
+
+    # Server və PHP versiyası bildirilməsin
+    Header always unset X-Powered-By
+    Header always unset X-Turbo-Charged-By
+    Header unset X-Powered-By
+</IfModule>
+
+# PHP versiyasının başlıqda görünməməsi
+<IfModule mod_php.c>
+    php_flag expose_php off
+</IfModule>
+

@@ -1,0 +1,8 @@
+# Lokal konfiqurasiya və baza
+admin/config.php
+storage/
+assets/img/admin/
+*.bak
+
+# Bazanın JSON çıxarışı (admin parol heşi var) — repozitoriyaya düşməsin
+admin/_data.json

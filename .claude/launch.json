@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "caucasuscl",
+      "runtimeExecutable": "php",
+      "runtimeArgs": ["-S", "localhost:8010", "-t", "D:\\test\\caucasuscl", "D:\\test\\caucasuscl\\router.php"],
+      "port": 8010
+    }
+  ]
+}

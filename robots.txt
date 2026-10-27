@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /includes/
+Disallow: /storage/
+
+# /sitemap_index.xml also works (legacy WordPress URL) and points here.
+Sitemap: https://caucasuscl.com/sitemap.xml

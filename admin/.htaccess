@@ -1,0 +1,15 @@
+# Admin qovluğunun qorunması
+
+# Konfiqurasiya və baza fayllarına birbaşa giriş bağlıdır
+<FilesMatch "^(config\.php|config\.sample\.php|db\.php|schema\.php|lib\.php|turnstile\.php)$">
+    Require all denied
+</FilesMatch>
+
+# Məlumat çıxarışları (admin parol heşi var) heç vaxt açılmasın
+<FilesMatch "\.(json|sql|sqlite|bak)$">
+    Require all denied
+</FilesMatch>
+
+# Qovluq siyahısı göstərilməsin
+Options -Indexes
+DirectoryIndex index.php

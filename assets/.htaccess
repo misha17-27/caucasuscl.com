@@ -1,0 +1,17 @@
+# Statik resurslar qovluğu — buradan heç bir skript icra olunmur.
+# Panelə yüklənən fayllar assets/img/admin/ altına düşür, ona görə bu
+# qadağa zərərli faylın icra olunmasının qarşısını alır.
+
+<FilesMatch "\.(php|php3|php4|php5|php7|php8|phtml|phar|pl|py|cgi|sh|bash|asp|aspx|jsp)$">
+    Require all denied
+</FilesMatch>
+
+# SVG birbaşa açıldıqda içindəki skript işləməsin
+<IfModule mod_headers.c>
+    <FilesMatch "\.svg$">
+        Header always set Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; sandbox"
+        Header always set X-Content-Type-Options "nosniff"
+    </FilesMatch>
+</IfModule>
+
+Options -Indexes
