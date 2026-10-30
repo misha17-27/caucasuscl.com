@@ -21,8 +21,9 @@ DirectoryIndex index.php
     RewriteCond %{QUERY_STRING} (\.\./|<script|%3Cscript|base64_decode\(|union[\s+]+select) [NC]
     RewriteRule .* - [F,L]
 
-    # Şablon və baza qovluqları birbaşa açılmır (statik ötürmədən ƏVVƏL)
-    RewriteRule ^(includes|storage)(/|$) - [F,L]
+    # Şablon, baza və məzmun qovluqları birbaşa açılmır (statik ötürmədən ƏVVƏL).
+    # `content` — məqalələrin JSON mənbəyi; sayt onu bazadan oxuyur, veb-dən lazım deyil.
+    RewriteRule ^(includes|storage|content|tools)(/|$) - [F,L]
 
     # Mövcud fayl və qovluqlar (admin, assets) toxunulmaz
     RewriteCond %{REQUEST_FILENAME} -f [OR]
