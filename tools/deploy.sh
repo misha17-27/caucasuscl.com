@@ -51,12 +51,24 @@ EXCL="$EXCL admin/config.php storage assets/img/admin wp-content"
 EXCL="$EXCL admin/install.php admin/migrate.php admin/migrate2.php admin/migrate3.php"
 EXCL="$EXCL admin/import-news.php admin/import-seo.php admin/seed-data.php admin/seed-i18n.php"
 
+# public_html-in OZ icazeleri qorunur.
+#
+# 31.10.2026-da sayt məhz buna görə yatdı: `rsync -rlptD "$SRC/" "$DP/"`
+# mənbə qovluğunun icazələrini hədəf qovluğuna da tətbiq edir, repozitoriya
+# kökü isə 700-dür (cPanel onu belə klonlayır). Nəticədə public_html 700 oldu,
+# veb server (qrup `nobody`) içəri girə bilmədi və bütün sayt 403 verdi.
+# `tar` də eyni şeyi edir, çünki arxivdə `./` yazısı var.
+# Ona görə: icazələr əvvəlcədən yadda saxlanılır və köçürmədən sonra bərpa olunur.
+DP_MODE="$(stat -c '%a' "$DP" 2>/dev/null || echo '')"
+
 if command -v rsync >/dev/null 2>&1; then
     OPTS=""
     for e in $EXCL; do OPTS="$OPTS --exclude=$e"; done
-    # -rlptD: owner/group kopyalanmir (paylasilan hostda ugursuz olur)
+    # -rltD: `p` QƏSDƏN yoxdur — mənbənin icazələri köçürülmür, yeni fayllar
+    # umask-dan normal icazə alır. owner/group da köçürülmür (paylaşılan hostda
+    # uğursuz olur).
     # shellcheck disable=SC2086
-    rsync -rlptD $OPTS "$SRC/" "$DP/" || { echo "XETA: rsync ugursuz"; exit 1; }
+    rsync -rltD $OPTS "$SRC/" "$DP/" || { echo "XETA: rsync ugursuz"; exit 1; }
     echo "fayllar kopyalandi (rsync)"
 else
     echo "rsync yoxdur, tar ile kopyalanir"
@@ -66,6 +78,16 @@ else
     ( cd "$SRC" && tar cf - $TAR_EXCL . ) | ( cd "$DP" && tar xf - ) \
         || { echo "XETA: tar ile kopyalama ugursuz"; exit 1; }
     echo "fayllar kopyalandi (tar)"
+fi
+
+if [ -n "$DP_MODE" ]; then
+    NOW="$(stat -c '%a' "$DP" 2>/dev/null || echo '')"
+    if [ "$NOW" != "$DP_MODE" ]; then
+        chmod "$DP_MODE" "$DP" && echo "hedef qovlugun icazeleri berpa olundu ($NOW -> $DP_MODE)"
+    fi
+else
+    echo "XEBERDARLIQ: stat islemedi, $DP icazeleri yoxlanilmadi."
+    echo "Sayt 403 verirse: chmod 750 $DP"
 fi
 
 # ---------------------------------------------------------------- 2. meqaleler
