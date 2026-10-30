@@ -1,0 +1,91 @@
+#!/bin/bash
+#
+# cPanel Git Version Control → «Deploy HEAD Commit» bu skripti çağırır
+# (.cpanel.yml-də yalnız bir sətir var, çünki cPanel-in YAML oxuyucusu
+# köhnədir və mürəkkəb və ya qeyri-ASCII məzmunda imtina edir).
+#
+# Nə edir:
+#   1. repozitoriyadakı faylları public_html-ə köçürür
+#   2. çatışmayan məqalə sətirlərini bazaya əlavə edir
+#
+# DİQQƏT: silmə YOXDUR. public_html-də repozitoriyada olmayan, lakin saytın
+# işləməsi üçün vacib fayllar var:
+#   admin/config.php      — baza parolu, Turnstile və SMTP açarları
+#   storage/              — baza faylı və jurnallar
+#   assets/img/admin/     — paneldən yüklənmiş şəkillər
+#   wp-content/uploads/   — köhnə WordPress şəkilləri (köhnə linklər sınmasın)
+#
+set -u
+
+SRC="$(cd "$(dirname "$0")/.." && pwd)"
+DP="${DEPLOY_PATH:-$HOME/public_html}"
+
+echo "== caucasuscl.com yerlesdirme =="
+echo "menbe : $SRC"
+echo "hedef : $DP"
+
+if [ ! -d "$DP" ]; then
+    echo "XETA: hedef qovluq yoxdur -> $DP"
+    exit 1
+fi
+if [ ! -f "$SRC/index.php" ]; then
+    echo "XETA: menbe duzgun deyil, index.php tapilmadi -> $SRC"
+    exit 1
+fi
+
+# ---------------------------------------------------------------- 1. fayllar
+#
+# Repozitoriyaya aid olub serverə lazım olmayanlar.
+EXCL=".git .github .claude .gitignore .gitattributes .cpanel.yml README.md router.php"
+#
+# SERVERİN ÖZ FAYLLARI — heç vaxt üzərinə yazılmır.
+# Bunlar .gitignore-dadır, yəni cPanel-in klonunda onsuz da yoxdur; lakin
+# skript işlək nüsxədən (məsələn tərtibatçının kompüterindən) işə salınsa,
+# yerli parollar və yerli baza serverdəkini əvəz edərdi. Sınaqda məhz bu baş
+# verdi, ona görə istisna açıq yazılıb.
+EXCL="$EXCL admin/config.php storage assets/img/admin wp-content"
+
+if command -v rsync >/dev/null 2>&1; then
+    OPTS=""
+    for e in $EXCL; do OPTS="$OPTS --exclude=$e"; done
+    # -rlptD: owner/group kopyalanmir (paylasilan hostda ugursuz olur)
+    # shellcheck disable=SC2086
+    rsync -rlptD $OPTS "$SRC/" "$DP/" || { echo "XETA: rsync ugursuz"; exit 1; }
+    echo "fayllar kopyalandi (rsync)"
+else
+    echo "rsync yoxdur, tar ile kopyalanir"
+    TAR_EXCL=""
+    for e in $EXCL; do TAR_EXCL="$TAR_EXCL --exclude=./$e"; done
+    # shellcheck disable=SC2086
+    ( cd "$SRC" && tar cf - $TAR_EXCL . ) | ( cd "$DP" && tar xf - ) \
+        || { echo "XETA: tar ile kopyalama ugursuz"; exit 1; }
+    echo "fayllar kopyalandi (tar)"
+fi
+
+# ---------------------------------------------------------------- 2. meqaleler
+# cPanel-de /usr/local/bin/php domenin secilmis versiyasi olmaya biler.
+PHPBIN=""
+for p in /opt/cpanel/ea-php74/root/usr/bin/php \
+         /opt/cpanel/ea-php82/root/usr/bin/php \
+         /opt/cpanel/ea-php81/root/usr/bin/php \
+         /opt/cpanel/ea-php80/root/usr/bin/php \
+         /usr/local/bin/php /usr/bin/php; do
+    [ -x "$p" ] && PHPBIN="$p" && break
+done
+
+if [ -z "$PHPBIN" ]; then
+    echo "XEBERDARLIQ: PHP ikiliyi tapilmadi, meqale importu atlanildi."
+    echo "Fayllar yerindedir, sayt isleyir. Importu elle isledin."
+    exit 0
+fi
+
+echo "php   : $PHPBIN ($("$PHPBIN" -r 'echo PHP_VERSION;' 2>/dev/null))"
+
+if [ ! -f "$DP/admin/config.php" ]; then
+    echo "XEBERDARLIQ: $DP/admin/config.php yoxdur, import atlanildi."
+    exit 0
+fi
+
+# --only-new: paneldan edilmis redakte her deploy-da geri qaytarilmasin.
+"$PHPBIN" "$DP/tools/import-articles.php" --only-new
+echo "== bitdi =="
