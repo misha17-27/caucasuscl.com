@@ -1,0 +1,21 @@
+---
+# cPanel → Git Version Control → Deploy HEAD Commit.
+#
+# Repozitoriya public_html-dən KƏNARDA saxlanılır (~/repositories/...), ona görə
+# `.git` qovluğu veb-dən açılmır. Bu tapşırıq fayllları public_html-ə köçürür.
+#
+# DİQQƏT: `--delete` İŞLƏDİLMİR. public_html-də repozitoriyada olmayan, lakin
+# saytın işləməsi üçün vacib fayllar var və onlar silinməməlidir:
+#   admin/config.php        — baza parolu, Turnstile və SMTP açarları
+#   storage/                — jurnal faylları
+#   assets/img/admin/       — paneldən yüklənmiş şəkillər
+#   wp-content/uploads/     — köhnə WordPress şəkilləri (köhnə linklər sınmasın)
+#
+# Məqalələr `--only-new` ilə yüklənir: paneldən edilmiş redaktə hər deploy-da
+# geri qaytarılmır. Fayldakı mətni zorla yazmaq lazım olsa, skript Terminaldan
+# bayraqsız işə salınır.
+deployment:
+  tasks:
+    - export DP=/home/caucasuscl/public_html
+    - /usr/bin/rsync -rlptD --exclude='.git/' --exclude='.github/' --exclude='.claude/' --exclude='.gitignore' --exclude='.gitattributes' --exclude='.cpanel.yml' --exclude='README.md' --exclude='router.php' ./ $DP/
+    - /usr/local/bin/php $DP/tools/import-articles.php --only-new

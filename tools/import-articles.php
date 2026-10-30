@@ -2,9 +2,14 @@
 /*
  * Öz SEO məqalələrimizi `content/seo-articles.json` faylından bazaya yazır.
  *
- *   php tools/import-articles.php            — yazır
- *   php tools/import-articles.php --dry      — yalnız hesabat, bazaya toxunmur
- *   php tools/import-articles.php --file=... — başqa JSON faylı
+ *   php tools/import-articles.php             — yazır (mövcud sətirləri yeniləyir)
+ *   php tools/import-articles.php --only-new  — yalnız çatışmayan sətirləri əlavə edir
+ *   php tools/import-articles.php --dry       — yalnız hesabat, bazaya toxunmur
+ *   php tools/import-articles.php --file=...  — başqa JSON faylı
+ *
+ * `--only-new` avtomatik yerləşdirmə (cPanel Git deploy) üçündür: paneldən
+ * edilmiş redaktə hər deploy-da geri qaytarılmasın. Fayldakı mətni bazaya
+ * zorla yazmaq lazım olduqda skript bayraqsız işə salınır.
  *
  * Niyə ayrıca fayl: məqalənin mətni yalnız bazada yaşayırdı, yəni
  * repozitoriyada görünmürdü və serverə əl ilə köçürülürdü. İndi mətn
@@ -38,10 +43,12 @@ chdir($ROOT);
    çünki aşağıda str_starts_with() işlənir. */
 require $ROOT . '/includes/compat.php';
 
-$dry  = false;
+$dry     = false;
+$onlyNew = false;
 $file = $ROOT . '/content/seo-articles.json';
 foreach (array_slice($argv ?? [], 1) as $a) {        // veb örtüyündə $argv olmur
     if ($a === '--dry' || $a === '-n') { $dry = true; continue; }
+    if ($a === '--only-new')           { $onlyNew = true; continue; }
     if (str_starts_with($a, '--file=')) { $file = substr($a, 7); continue; }
     exit("Tanınmayan arqument: $a\n");
 }
@@ -160,7 +167,7 @@ $ins = $db->prepare('INSERT INTO `news` (`' . implode('`,`', $cols) . '`) VALUES
 $upd = $db->prepare('UPDATE `news` SET `'
                   . implode('` = ?, `', array_slice($cols, 2)) . '` = ? WHERE `id` = ?');
 
-$new = $same = 0;
+$new = $upds = $kept = 0;
 if (!$dry) $db->beginTransaction();
 foreach ($rows as $r) {
     $sel->execute([$r['lang'], $r['slug']]);
@@ -172,13 +179,17 @@ foreach ($rows as $r) {
         if (!$dry) $ins->execute($vals);
         $new++;
         printf("  + %-3s %-46s %2d link  %5d simvol\n", $r['lang'], $r['slug'], $r['_links'], mb_strlen($r['body']));
+    } elseif ($onlyNew) {
+        /* Avtomatik yerləşdirmədə paneldən edilmiş redaktəni geri qaytarmırıq. */
+        $kept++;
+        printf("  = %-3s %-46s bazadakı variant saxlanıldı\n", $r['lang'], $r['slug']);
     } else {
         if (!$dry) $upd->execute(array_merge(array_slice($vals, 2), [$id]));
-        $same++;
+        $upds++;
         printf("  ~ %-3s %-46s %2d link  %5d simvol\n", $r['lang'], $r['slug'], $r['_links'], mb_strlen($r['body']));
     }
 }
 if (!$dry) $db->commit();
 
-printf("\nyeni: %d, yeniləndi: %d, cəmi: %d sətir\n", $new, $same, count($rows));
+printf("\nyeni: %d, yeniləndi: %d, toxunulmadı: %d, cəmi: %d sətir\n", $new, $upds, $kept, count($rows));
 printf("bazada öz məqalə sayı: %d\n", (int)$db->query('SELECT COUNT(*) FROM `news` WHERE `is_own` = 1')->fetchColumn());

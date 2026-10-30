@@ -16,6 +16,7 @@ $query  = $_SERVER['QUERY_STRING'] ?? '';
 
 /* ---------- gizli fayllar ---------- */
 if (preg_match('#^/(storage|includes|content|tools)(/|$)#', $rawUri)
+    || preg_match('#(^|/)\.(git|hg|svn|env)(/|$)|^/\.cpanel\.yml$#', $rawUri)
     || preg_match('#^/admin/(config|config\.sample|db|schema|lib|turnstile|seed-i18n)\.php$#', $rawUri)
     || preg_match('#\.(bak|bak2|sqlite|sqlite-wal|sqlite-shm|log)$#', $rawUri)) {
     http_response_code(403); echo 'Forbidden'; return true;

@@ -25,6 +25,12 @@ DirectoryIndex index.php
     # `content` — məqalələrin JSON mənbəyi; sayt onu bazadan oxuyur, veb-dən lazım deyil.
     RewriteRule ^(includes|storage|content|tools)(/|$) - [F,L]
 
+    # Versiya nəzarəti və yerləşdirmə faylları. Repozitoriya public_html-dən
+    # kənarda klonlanır, amma səhvən bura düşsə, `.git` bütün tarixçəni
+    # (o cümlədən silinmiş sirrləri) verərdi.
+    RewriteRule (^|/)\.(git|hg|svn|env)(/|$) - [F,L]
+    RewriteRule ^\.cpanel\.yml$ - [F,L]
+
     # Mövcud fayl və qovluqlar (admin, assets) toxunulmaz
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
