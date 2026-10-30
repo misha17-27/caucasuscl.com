@@ -44,6 +44,12 @@ EXCL=".git .github .claude .gitignore .gitattributes .cpanel.yml README.md route
 # yerli parollar və yerli baza serverdəkini əvəz edərdi. Sınaqda məhz bu baş
 # verdi, ona görə istisna açıq yazılıb.
 EXCL="$EXCL admin/config.php storage assets/img/admin wp-content"
+#
+# BİRDƏFƏLİK quraşdırma skriptləri. Repozitoriyada tarix üçün qalırlar, lakin
+# quraşdırma bitəndən sonra serverdən silinmişdilər — hər yerləşdirmədə geri
+# qayıtmamalıdırlar. Hamısı açarla qorunur, amma işlək saytda yerləri yoxdur.
+EXCL="$EXCL admin/install.php admin/migrate.php admin/migrate2.php admin/migrate3.php"
+EXCL="$EXCL admin/import-news.php admin/import-seo.php admin/seed-data.php admin/seed-i18n.php"
 
 if command -v rsync >/dev/null 2>&1; then
     OPTS=""
