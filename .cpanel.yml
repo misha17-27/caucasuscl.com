@@ -18,4 +18,9 @@ deployment:
   tasks:
     - export DP=/home/caucasuscl/public_html
     - /usr/bin/rsync -rlptD --exclude='.git/' --exclude='.github/' --exclude='.claude/' --exclude='.gitignore' --exclude='.gitattributes' --exclude='.cpanel.yml' --exclude='README.md' --exclude='router.php' ./ $DP/
-    - /usr/local/bin/php $DP/tools/import-articles.php --only-new
+    # PHP ikiliyi: cPanel-də /usr/local/bin/php həmişə domenin seçilmiş
+    # versiyası olmur, ona görə əvvəlcə ea-php74 axtarılır.
+    - export PHPBIN=$(for p in /opt/cpanel/ea-php74/root/usr/bin/php /opt/cpanel/ea-php82/root/usr/bin/php /usr/local/bin/php /usr/bin/php; do [ -x "$p" ] && echo "$p" && break; done)
+    # Diqqət — YAML plain skalyarında «iki nöqtə + boşluq» olmamalıdır.
+    - echo "PHP ikiliyi = ${PHPBIN:-TAPILMADI} / $($PHPBIN -r 'echo PHP_VERSION;' 2>/dev/null)"
+    - $PHPBIN $DP/tools/import-articles.php --only-new
