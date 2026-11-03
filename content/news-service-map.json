@@ -16,5 +16,13 @@
   "malin-gomruk-kodu-nece-teyin-olunur": ["gomruk-beyannameleri"],
   "yukun-gomruk-anbarindan-cixarilmasi": ["yuklerin-catdirilmasi"],
   "idxal-xerclerini-evvelceden-hesablamaq": ["konsaltinq-xidmeti"],
-  "konsiqnasiya-nedir-ve-ne-vaxt-serfelidir": ["konsiqnasiya-xidmetleri"]
+  "konsiqnasiya-nedir-ve-ne-vaxt-serfelidir": ["konsiqnasiya-xidmetleri"],
+
+  "gomruk-odenisleri-nedir": ["gomruk-beyannameleri", "konsaltinq-xidmeti"],
+  "muveqqeti-idxal-ve-ixrac-proseduru": ["konsiqnasiya-xidmetleri"],
+  "ixrac-ucun-hansi-senedler-lazimdir": ["idxal-ixrac-senedleri"],
+  "azerbaycandan-kecen-tranzit-yukler": ["yuklerin-catdirilmasi"],
+  "menshe-sertifikati-ve-tarif-guzestleri": ["sertifikatlar-ve-icazeler"],
+  "beynelxalq-yuk-dasinmasi-azerbaycan": ["logistika-xidmetleri"],
+  "buraxilisdan-sonraki-yoxlama": ["konsaltinq-xidmeti"]
 }
