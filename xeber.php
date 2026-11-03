@@ -125,6 +125,29 @@ $others = array_slice($others, 0, 3, true);
         <p><?= e($n['excerpt']) ?></p>
       <?php endif; ?>
 
+      <?php
+      /* Mövzuya uyğun xidmət(lər). Dövlət Gömrük Komitəsinin materialında da
+         görünür, amma onun mətninə toxunmur — ayrıca başlıq altında, bizim
+         adımızdan. Xəritədə olmayan xəbərdə blok ümumiyyətlə çıxmır. */
+      $__rel = news_related_services((string)($n['tkey'] ?? ''));
+      if ($__rel):
+          $__relHead = ['az' => 'Bu mövzu üzrə xidmətimiz',
+                        'ru' => 'Наша услуга по этой теме',
+                        'en' => 'Our service on this topic'][LANG] ?? 'Bu mövzu üzrə xidmətimiz';
+      ?>
+        <div class="rel-svc">
+          <h2><?= e(t('news.related', $__relHead)) ?></h2>
+          <ul>
+            <?php foreach ($__rel as $__s): ?>
+              <li>
+                <a href="<?= e(url('/xidmetler/' . $__s['slug'])) ?>"><?= e($__s['title']) ?></a>
+                <?php if ($__s['short'] !== ''): ?><span><?= e($__s['short']) ?></span><?php endif; ?>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        </div>
+      <?php endif; ?>
+
       <h2><?= e(t('news.left')) ?></h2>
       <p><?= e(t('news.lefttext')) ?></p>
       <p style="margin-top:22px">

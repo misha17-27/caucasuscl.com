@@ -205,6 +205,8 @@ try {
         $SERVICES = [];
         foreach ($rows as $r) {
             $SERVICES[$r['slug']] = [
+                /* tkey dillər arasında sabitdir — xəbəri xidmətə bağlamaq üçün lazımdır */
+                'tkey'       => (string)($r['tkey'] ?? ''),
                 'no'         => (string)$r['no'],
                 'title'      => (string)$r['title'],
                 'short'      => (string)$r['short'],
@@ -235,6 +237,9 @@ try {
             $img = trim((string)($r['image'] ?? ''));
             if ($img === '') $img = $__cover[(string)($r['tkey'] ?? '')] ?? '';
             $NEWS[$r['slug']] = [
+                /* tkey dillər arasında sabitdir — xəbəri xidmətə bağlamaq üçün lazımdır
+                   (slug dilə görə dəyişə bilər, tkey isə yox) */
+                'tkey'     => (string)($r['tkey'] ?? ''),
                 'title'    => (string)$r['title'],
                 'date'     => (string)$r['pub_date'],
                 'video'    => (string)$r['video'],

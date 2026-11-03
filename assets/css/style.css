@@ -258,6 +258,17 @@ nav.main a.on::after{content:"";position:absolute;left:14px;right:14px;bottom:2p
 .side-nav a.on{background:var(--green);color:#fff}
 .side-nav i{font-style:normal;font-size:12px;font-weight:800;opacity:.6;padding-top:2px}
 .side-cta{background:linear-gradient(160deg,var(--navy),var(--navy-l));color:#fff;border:0}
+
+/* Xəbərin altında mövzuya uyğun xidmət keçidi (yan paneldən fərqli: tematikdir) */
+.rel-svc{margin:34px 0 10px;padding:22px 24px;background:var(--green-l);border:1px solid #cfe7da;border-radius:var(--r)}
+.rel-svc h2{font-size:17px;margin:0 0 14px;color:var(--green-d)}
+/* .prose ul li{display:flex} blokun içinə də düşür — başlıq və izah yan-yana
+   qalırdı; ona görə burada açıq şəkildə block-a qaytarılır */
+.rel-svc ul{list-style:none;display:grid;gap:13px}
+.rel-svc ul li{display:block}
+.rel-svc a{font-weight:700;color:var(--green-d);font-size:15.5px;line-height:1.35}
+.rel-svc a:hover{text-decoration:underline}
+.rel-svc span{display:block;color:var(--muted);font-size:14px;margin-top:4px;font-weight:400}
 .side-cta h3{color:#fff}
 .side-cta p{color:#b6cddb;font-size:14.5px;margin-bottom:18px}
 .side-cta .ci{margin-bottom:16px}

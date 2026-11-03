@@ -1,0 +1,20 @@
+{
+  "_comment": "Xəbəri mövzuca uyğun xidmətə bağlayır. Açar — xəbərin tkey-i (üç dildə eynidir), dəyər — xidmətin tkey-i. Yan paneldəki xidmət siyahısı hər səhifədə eynidir və tematik siqnal vermir; bu xəritə isə mətnin altında konkret, mövzuya uyğun keçid göstərir. Yeni xəbər əlavə edəndə buraya da bir sətir yazılır; xəritədə olmayan xəbərdə blok ümumiyyətlə çıxmır.",
+  "_note": "Dövlət Gömrük Komitəsinin materialına BLOK ƏLAVƏ OLUNUR, MƏTNİ DƏYİŞDİRİLMİR — blok ayrıca başlıq altındadır və bizim adımızdandır.",
+
+  "gomruk-rusumlari-hesablanmasi": ["gomruk-beyannameleri", "konsaltinq-xidmeti"],
+  "gomruk-odenisleri-uzre-yaranmis-gomruk-borcu-hansi-qaydada-odenilir": ["gomruk-beyannameleri"],
+  "mallarin-muveqqeti-ixrac-gomruk-proseduru-altinda-qalma-muddeti-ne-qederdir": ["konsiqnasiya-xidmetleri"],
+
+  "gomruk-brokeri-kimdir-ve-ne-vaxt-lazimdir": ["gomruk-beyannameleri"],
+  "idxal-ucun-hansi-senedler-lazimdir": ["idxal-ixrac-senedleri"],
+  "gomruk-resmilesdirilmesi-merhele-merhele": ["gomruk-beyannameleri"],
+  "gomruk-deyeri-nedir-ve-nece-mueyyen-edilir": ["konsaltinq-xidmeti"],
+  "yuk-dasima-novunu-nece-secmeli": ["logistika-xidmetleri"],
+
+  "hansi-mallar-sertifikat-ve-icaze-teleb-edir": ["sertifikatlar-ve-icazeler"],
+  "malin-gomruk-kodu-nece-teyin-olunur": ["gomruk-beyannameleri"],
+  "yukun-gomruk-anbarindan-cixarilmasi": ["yuklerin-catdirilmasi"],
+  "idxal-xerclerini-evvelceden-hesablamaq": ["konsaltinq-xidmeti"],
+  "konsiqnasiya-nedir-ve-ne-vaxt-serfelidir": ["konsiqnasiya-xidmetleri"]
+}

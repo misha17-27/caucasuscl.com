@@ -235,6 +235,40 @@ function img(string $file): string {
 }
 
 /**
+ * Xəbərə mövzuca uyğun xidmətlər: `content/news-service-map.json`.
+ *
+ * Yan paneldəki xidmət siyahısı hər səhifədə eynidir — axtarış sistemi üçün
+ * bu, naviqasiyadır, tematik keçid deyil. Bu funksiya isə konkret xəbərin
+ * mövzusuna uyğun bir-iki xidməti qaytarır; xəritədə yoxdursa, boş massiv
+ * qaytarır və səhifədə heç nə görünmür.
+ *
+ * Qaytarılan slug CARİ DİLİNDİR: xəritə tkey saxlayır, slug isə dilə görə
+ * fərqlidir (RU xidmət ünvanları AZ-dan fərqlənir).
+ */
+function news_related_services(string $tkey): array {
+    static $map = null;
+    if ($map === null) {
+        $f = dirname(__DIR__) . '/content/news-service-map.json';
+        $j = is_file($f) ? json_decode((string)file_get_contents($f), true) : null;
+        $map = is_array($j) ? $j : [];
+    }
+    $tkey = trim($tkey);
+    if ($tkey === '' || empty($map[$tkey]) || !is_array($map[$tkey])) return [];
+
+    $all = $GLOBALS['SERVICES'] ?? [];
+    $out = [];
+    foreach ($map[$tkey] as $want) {
+        foreach ($all as $slug => $s) {
+            if (($s['tkey'] ?? '') !== $want) continue;
+            $out[] = ['slug' => (string)$slug, 'title' => (string)($s['title'] ?? ''),
+                      'short' => (string)($s['short'] ?? ''), 'no' => (string)($s['no'] ?? '')];
+            break;
+        }
+    }
+    return $out;
+}
+
+/**
  * Şəklin ölçü atributları: width="1600" height="1000".
  * Brauzer şəkil yüklənməmişdən yer ayırır — səhifə tullanmır (CLS).
  * Ölçü fayldan oxunur, ona görə panel başqa şəkil yükləsə də düzgün qalır.
