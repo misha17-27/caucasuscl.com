@@ -1,0 +1,228 @@
+{
+    "_comment": "Səhifələrin title/description mənbəyi. Bazaya yazmaq üçün: php tools/import-seo-meta.php. Köhnə mətnlər WordPress/Yoast-dan qalmışdı və açar söz yığını idi.",
+    "services": [
+        {
+            "tkey": "gomruk-beyannameleri",
+            "lang": {
+                "az": {
+                    "title": "Gömrük bəyannaməsinin tərtibi Bakıda | Gömrük brokeri",
+                    "description": "İdxal, ixrac və tranzit bəyannamələrini elektron sistemdə tərtib edirik: XİF MN kodunun təyini, invoys, müqavilə və nəqliyyat sənədlərinin yoxlanılması."
+                },
+                "ru": {
+                    "title": "Составление таможенной декларации в Баку | Услуги брокера",
+                    "description": "Оформляем таможенные декларации для импорта, экспорта и транзита: подбор кода ТН ВЭД, проверка инвойса, контракта и транспортных документов."
+                },
+                "en": {
+                    "title": "Customs Declaration Services in Baku | Licensed Broker",
+                    "description": "We file electronic customs declarations for import, export and transit in Azerbaijan: HS code classification, invoice, contract and transport checks."
+                }
+            }
+        },
+        {
+            "tkey": "idxal-ixrac-senedleri",
+            "lang": {
+                "az": {
+                    "title": "İdxal-ixrac sənədləri | Bakıda lisenziyalı gömrük brokeri",
+                    "description": "Sənəd paketinə ticarət fakturası, mənşə sertifikatı, CMR, konosament və aviabill daxildir; notarial tərcümə və təsdiqi də təşkil edirik."
+                },
+                "ru": {
+                    "title": "Документы для импорта и экспорта | Таможенный брокер в Баку",
+                    "description": "В пакет входят коммерческий счёт, сертификат происхождения, транспортные документы (CMR, коносамент, авианакладная), нотариальные переводы и заверение."
+                },
+                "en": {
+                    "title": "Customs clearance documents in Azerbaijan | Baku broker",
+                    "description": "Import and export paperwork prepared by a licensed customs broker: commercial invoice, certificate of origin, CMR, bill of lading and notarised translations."
+                }
+            }
+        },
+        {
+            "tkey": "sertifikatlar-ve-icazeler",
+            "lang": {
+                "az": {
+                    "title": "Sertifikat və icazələrin alınması Bakıda | Gömrük brokeri",
+                    "description": "Bakıda mənşə, uyğunluq, fitosanitar sertifikatı və baytarlıq şəhadətnaməsi üçün sənədləri hazırlayır, dövlət orqanlarına təqdim edib prosesi izləyirik."
+                },
+                "ru": {
+                    "title": "Сертификаты и разрешительные документы | Таможенный брокер",
+                    "description": "Готовим документы и сопровождаем получение сертификата происхождения, сертификата соответствия, фитосанитарных и ветеринарных документов в госорганах Баку."
+                },
+                "en": {
+                    "title": "Customs Permits and Certificates in Baku | Licensed Broker",
+                    "description": "We prepare and file applications with the Azerbaijani authorities for certificates of origin and conformity, and for phytosanitary and veterinary documents."
+                }
+            }
+        },
+        {
+            "tkey": "yuklerin-catdirilmasi",
+            "lang": {
+                "az": {
+                    "title": "Gömrükdən yük çıxarılması Bakıda | Ünvana çatdırılma",
+                    "description": "Gömrük anbarından yükün təhvil alınması üçün sənədlərin təqdim edilməsi, vergi və rüsumların köçürülməsi, yükün tamlığının yoxlanılması və daşınması."
+                },
+                "ru": {
+                    "title": "Получение груза с таможенного склада в Баку | Доставка",
+                    "description": "Подача документов в таможенный орган, расчёт и уплата таможенных пошлин и налогов, проверка целостности груза и доставка по адресу."
+                },
+                "en": {
+                    "title": "Cargo release from the customs warehouse in Baku | Delivery",
+                    "description": "Submission of documents to the customs authority, payment of customs duties and taxes, checks on the condition of the cargo and delivery to your address."
+                }
+            }
+        },
+        {
+            "tkey": "logistika-xidmetleri",
+            "lang": {
+                "az": {
+                    "title": "Bakıda beynəlxalq yük daşınması | Multimodal marşrutlar",
+                    "description": "Dəniz, dəmir yolu, hava və avtomobil daşımaları, konteyner yükləri və anbarlama. Gömrük bəyannaməsini lisenziyalı brokerimiz hazırlayır."
+                },
+                "ru": {
+                    "title": "Международные грузоперевозки в Баку | Все виды транспорта",
+                    "description": "Морские, железнодорожные, авиа- и автомобильные перевозки, контейнерные грузы и складирование. Декларации готовит наш лицензированный брокер."
+                },
+                "en": {
+                    "title": "Freight forwarding in Baku | Multimodal transport routes",
+                    "description": "Sea, rail, air and road shipments, container cargo and warehousing. Customs declarations are prepared by our licensed broker in Baku."
+                }
+            }
+        },
+        {
+            "tkey": "konsaltinq-xidmeti",
+            "lang": {
+                "az": {
+                    "title": "Gömrük və logistika konsaltinqi Bakıda | idxal və ixrac",
+                    "description": "Lisenziyalı gömrük brokeri malın XİF ƏN kodunu müəyyən edir, uyğun gömrük proseduru, daşınma sxemi və sənəd tələbləri barədə məsləhət verir."
+                },
+                "ru": {
+                    "title": "Таможенный консалтинг в Баку | лицензированный брокер",
+                    "description": "Консультируем по классификации товаров по ТН ВЭД, выбору таможенной процедуры, схеме перевозки и пакету документов для импорта и экспорта."
+                },
+                "en": {
+                    "title": "Customs clearance consulting in Baku | Licensed broker",
+                    "description": "We advise importers and exporters on HS code classification, the right customs procedure, transport routes and the documents each shipment needs."
+                }
+            }
+        },
+        {
+            "tkey": "konsiqnasiya-xidmetleri",
+            "lang": {
+                "az": {
+                    "title": "Konsiqnasiya üzrə gömrük rəsmiləşdirilməsi | Bakıda broker",
+                    "description": "Konsiqnasiya yükləri üçün gömrük bəyannaməsini tərtib edirik, icazə və sertifikatları alırıq, yükü gömrük anbarından təhvil alıb ünvana çatdırırıq."
+                },
+                "ru": {
+                    "title": "Таможенное оформление товаров на консигнации в Баку",
+                    "description": "Лицензированный брокер оформляет товар на консигнации: таможенная декларация, сертификаты, получение груза с таможенного склада и доставка по адресу."
+                },
+                "en": {
+                    "title": "Customs clearance for consignment goods in Azerbaijan",
+                    "description": "Licensed customs broker for goods on consignment: import and export declarations, certificates, collection from the customs warehouse and delivery."
+                }
+            }
+        }
+    ],
+    "pages": [
+        {
+            "slug": "/",
+            "lang": {
+                "az": {
+                    "title": "Gömrük brokeri Bakıda | Caucasuscl idxal-ixrac dəstəyi",
+                    "description": "Lisenziyalı gömrük brokeri Bakıda: bəyannamələrin tərtibi, idxal-ixrac sənədləri, sertifikat və icazələr, anbardan təhvil və logistika."
+                },
+                "ru": {
+                    "title": "Таможенный брокер в Баку | декларации и доставка груза",
+                    "description": "Лицензированный таможенный брокер в Баку: оформление импортных, экспортных и транзитных деклараций, сертификаты, получение груза и доставка."
+                },
+                "en": {
+                    "title": "Customs broker in Baku | Caucasus Customs and Logistics",
+                    "description": "Licensed customs broker in Baku: import, export and transit declarations, certificates and permits, cargo release from the warehouse and delivery."
+                }
+            }
+        },
+        {
+            "slug": "haqqimizda",
+            "lang": {
+                "az": {
+                    "title": "Caucasuscl haqqında | Bakıda lisenziyalı gömrük brokeri",
+                    "description": "Caucasus Customs and Logistics MMC 2018-ci ildən gömrük brokeridir: bəyannamə, sənədləşmə, sertifikat və logistika üzrə təcrübəli komanda."
+                },
+                "ru": {
+                    "title": "Caucasuscl | лицензированный таможенный брокер в Баку",
+                    "description": "Caucasus Customs and Logistics MMC работает таможенным брокером с 2018 года: декларирование, документы для импорта и экспорта, сертификаты, логистика."
+                },
+                "en": {
+                    "title": "About us | licensed customs broker in Baku since 2018",
+                    "description": "Caucasus Customs and Logistics MMC has worked as a licensed customs broker since 2018, handling declarations, documents, certificates and logistics."
+                }
+            }
+        },
+        {
+            "slug": "elaqe",
+            "lang": {
+                "az": {
+                    "title": "Əlaqə | gömrük brokeri Bakı — ünvan, telefon, forma",
+                    "description": "Bakı, Heydər Əliyev prospekti 95a ünvanında ofis. Telefon (+994) 70 548 01 10 və ya sayt formu ilə yük, sənəd və gömrük sualınızı yazın."
+                },
+                "ru": {
+                    "title": "Контакты таможенного брокера в Баку | адрес, телефон",
+                    "description": "Офис в Баку, проспект Гейдара Алиева 95a. Позвоните по номеру (+994) 70 548 01 10 или напишите через форму на сайте о грузе и документах."
+                },
+                "en": {
+                    "title": "Contact our customs broker in Baku | address, phone",
+                    "description": "Our office is at 95a Heydar Aliyev Avenue, Baku. Call (+994) 70 548 01 10 or send a request about your cargo, documents or customs clearance."
+                }
+            }
+        },
+        {
+            "slug": "xidmetler",
+            "lang": {
+                "az": {
+                    "title": "Gömrük və logistika xidmətləri Bakıda | broker dəstəyi",
+                    "description": "Gömrük bəyannamələrinin tərtibi, idxal-ixrac sənədləri, sertifikat və icazələr, anbardan təhvil, dəniz, hava, dəmir yolu və avtomobil daşımaları."
+                },
+                "ru": {
+                    "title": "Таможенные и логистические услуги в Баку | оформление",
+                    "description": "Оформление таможенных деклараций, документы и сертификаты для импорта и экспорта, морские, авиа, железнодорожные и автомобильные перевозки."
+                },
+                "en": {
+                    "title": "Customs and logistics services in Baku | broker support",
+                    "description": "Customs declarations, import and export paperwork, certificates and permits, cargo release from bonded warehouses, sea, air, rail and road freight."
+                }
+            }
+        },
+        {
+            "slug": "xeberler",
+            "lang": {
+                "az": {
+                    "title": "Gömrük xəbərləri | idxal-ixrac qaydaları və izahlar",
+                    "description": "Dövlət Gömrük Komitəsinin rəsmi izahları əsasında hazırlanan xəbərlər və idxal-ixrac rəsmiləşdirilməsi üzrə öz analitik yazılarımız."
+                },
+                "ru": {
+                    "title": "Новости и разъяснения таможни для импортёров и экспортёров",
+                    "description": "Разъяснения на основе официальных публикаций Государственного таможенного комитета и наши статьи об оформлении импорта и экспорта в Азербайджане."
+                },
+                "en": {
+                    "title": "Customs news and explanations for importers in Azerbaijan",
+                    "description": "News and explanations based on State Customs Committee releases, plus our own articles on clearing imports and exports in Azerbaijan."
+                }
+            }
+        },
+        {
+            "slug": "linkler",
+            "lang": {
+                "az": {
+                    "title": "Faydalı linklər | gömrük və idxal-ixrac üçün saytlar",
+                    "description": "Dövlət Gömrük Komitəsi, Qida Təhlükəsizliyi Agentliyi və digər dövlət orqanlarının rəsmi saytları — sertifikat və icazə sənədləri üçün."
+                },
+                "ru": {
+                    "title": "Полезные ссылки | таможня и госорганы Азербайджана",
+                    "description": "Официальные сайты Государственного таможенного комитета, Агентства по безопасности пищевых продуктов и других ведомств — для деклараций и сертификатов."
+                },
+                "en": {
+                    "title": "Useful links | Azerbaijan customs and state agencies",
+                    "description": "Official websites of the State Customs Committee, the Food Safety Agency and other bodies you need for declarations, certificates and permits."
+                }
+            }
+        }
+    ]
+}
