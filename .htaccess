@@ -9,6 +9,11 @@
 Options -Indexes
 DirectoryIndex index.php
 
+# Manifest düzgün tiplə verilməlidir, yoxsa brauzer onu oxumur
+AddType application/manifest+json .webmanifest
+AddType image/x-icon              .ico
+AddType image/svg+xml             .svg
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
     # RewriteBase /            # alt qovluqda yerləşdirsəniz açın

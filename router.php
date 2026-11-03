@@ -23,6 +23,14 @@ if (preg_match('#^/(storage|includes|content|tools)(/|$)#', $rawUri)
 }
 
 /* ---------- statik fayllar ---------- */
+/* PHP-nin daxili serveri .webmanifest tipini tanımır və onu octet-stream kimi
+   verir — Chrome belə manifesti qəbul etmir. Canlı serverdə bunu .htaccess-dəki
+   AddType həll edir; burada əl ilə veririk ki, davranış eyni olsun. */
+if (substr($rawUri, -12) === '.webmanifest' && is_file($root . $rawUri)) {
+    header('Content-Type: application/manifest+json; charset=utf-8');
+    readfile($root . $rawUri);
+    return true;
+}
 if ($rawUri !== '/' && file_exists($root . $rawUri) && !is_dir($root . $rawUri)) {
     return false;
 }

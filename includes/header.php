@@ -43,8 +43,14 @@ $__og    = og_image($page_image);
 <link rel="alternate" hreflang="<?= e($lc) ?>" href="<?= e(abs_url(lang_switch_url($lc))) ?>">
 <?php endforeach; ?>
 <link rel="alternate" hreflang="x-default" href="<?= e(abs_url(lang_switch_url(LANG_DEFAULT))) ?>">
-<link rel="icon" href="<?= e(img('Caucasus-1.svg')) ?>" type="image/svg+xml">
+<?php /* Favicon. Köhnə variantda bura bütün üfüqi loqo (Caucasus-1.svg) qoyulmuşdu —
+         16 pikseldə oxunmayan ləkəyə çevrilirdi. İndi loqonun yalnız halqası işlənir.
+         /favicon.ico kökdədir: brauzerlər və botlar onu teqdən asılı olmadan istəyir. */ ?>
+<link rel="icon" href="<?= e(img('favicon.svg')) ?>" type="image/svg+xml">
+<link rel="icon" href="<?= e(BASE_URL . '/favicon.ico') ?>" sizes="32x32">
+<link rel="icon" href="<?= e(img('favicon-96.png')) ?>" type="image/png" sizes="96x96">
 <link rel="apple-touch-icon" href="<?= e(img('apple-touch-icon.png')) ?>">
+<link rel="manifest" href="<?= e(BASE_URL . '/site.webmanifest') ?>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">

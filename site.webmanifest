@@ -1,0 +1,17 @@
+{
+  "name": "Caucasus Customs and Logistics",
+  "short_name": "Caucasus CL",
+  "description": "Bakıda lisenziyalı gömrük brokeri: bəyannamələr, idxal-ixrac sənədləri, sertifikatlar və logistika.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#092235",
+  "icons": [
+    { "src": "/assets/img/favicon-96.png",        "sizes": "96x96",   "type": "image/png" },
+    { "src": "/assets/img/icon-192.png",          "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/img/icon-512.png",          "sizes": "512x512", "type": "image/png" },
+    { "src": "/assets/img/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/assets/img/favicon.svg",           "sizes": "any",     "type": "image/svg+xml" }
+  ]
+}
