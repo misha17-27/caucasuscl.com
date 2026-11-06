@@ -224,6 +224,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 'slug' => trim($_POST['slug'] ?? ''), 'no' => trim($_POST['no'] ?? ''),
                 'title' => $_POST['title'] ?? '', 'short' => $_POST['short'] ?? '',
                 'img' => $img, 'lead' => $_POST['lead'] ?? '', 'body' => $_POST['body'] ?? '',
+                'faq' => $_POST['faq'] ?? '',
                 'meta_title' => $_POST['meta_title'] ?? '', 'meta_desc' => $_POST['meta_desc'] ?? '',
                 'sort' => (int)($_POST['sort'] ?? 0), 'visible' => isset($_POST['visible']) ? 1 : 0,
                 'lang' => $L,
@@ -566,7 +567,7 @@ elseif ($section === 'services') {
         }
         echo '</table></div></div>';
     } else {
-        $s = ['id' => '', 'slug' => '', 'no' => '', 'title' => '', 'short' => '', 'img' => '', 'lead' => '', 'body' => '', 'meta_title' => '', 'meta_desc' => '', 'sort' => 0, 'visible' => 1];
+        $s = ['id' => '', 'slug' => '', 'no' => '', 'title' => '', 'short' => '', 'img' => '', 'lead' => '', 'body' => '', 'faq' => '', 'meta_title' => '', 'meta_desc' => '', 'sort' => 0, 'visible' => 1];
         if ($mode === 'edit') { $st = $db->prepare('SELECT * FROM services WHERE id=?'); $st->execute([(int)$_GET['edit']]); $s = array_merge($s, $st->fetch() ?: []); }
         echo '<form method="post" enctype="multipart/form-data" class="panel">' . csrf_field() . '<input type="hidden" name="action" value="save"><input type="hidden" name="id" value="' . e($s['id']) . '">';
         echo '<h3>' . ($mode === 'edit' ? 'Изменить услугу' : 'Новая услуга') . '</h3>';
@@ -582,6 +583,14 @@ elseif ($section === 'services') {
         echo '<label>Содержание страницы</label><textarea name="body" data-rich style="min-height:280px;font-family:ui-monospace,Consolas,monospace;font-size:13px">' . e($s['body']) . '</textarea>';
         echo '<div class="muted" style="margin-top:8px;background:#f4f7f8;padding:12px 14px;border-radius:9px;line-height:1.7">'
            . '<b>Разметка исходного текста</b> — нужна, только если вы переключились на него. В визуальном редакторе всё делают кнопки.<br>' . '<code>## Заголовок</code> &middot; <code>### Подзаголовок</code> &middot; обычная строка — абзац<br>' . '<code>- пункт</code> — маркированный список &middot; <code>+ пункт</code> — нумерованный<br>' . '<code>**жирный**</code> &middot; <code>*курсив*</code> &middot; <code>[текст](адрес)</code> — ссылка &middot; <code>* Название | Описание</code> — карточка' . '</div>';
+        echo '<h4>Частые вопросы</h4>';
+        echo '<label>Вопросы и ответы</label><textarea name="faq" style="min-height:200px;font-family:ui-monospace,Consolas,monospace;font-size:13px">' . e($s['faq'] ?? '') . '</textarea>';
+        echo '<div class="muted" style="margin-top:8px;background:#f4f7f8;padding:12px 14px;border-radius:9px;line-height:1.7">'
+           . 'Строка вопроса начинается с <code>?&nbsp;</code>, следующие строки — ответ. Пустая строка не нужна.<br>'
+           . '<code>? Сколько занимает оформление?</code><br>Ответ в две-три фразы, без ссылок.<br>'
+           . '<code>? Какие документы нужны?</code><br>Второй ответ.<br>'
+           . 'Блок выводится на странице и передаётся Google как разметка FAQ — вопросы могут показаться прямо в выдаче. '
+           . 'Поэтому ответ должен отвечать на вопрос, а не рекламировать. Если поле пустое, блок не выводится.' . '</div>';
         echo '<h4>SEO этой услуги</h4>';
         echo '<label>SEO Title</label><input type="text" name="meta_title" value="' . e($s['meta_title']) . '">';
         echo '<label>Meta Description</label><textarea name="meta_desc">' . e($s['meta_desc']) . '</textarea>';

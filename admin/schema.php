@@ -47,6 +47,7 @@ function cms_create_tables(PDO $db): array {
             `body` TEXT,
             `meta_title` VARCHAR(255) DEFAULT '',
             `meta_desc` TEXT,
+            `faq` TEXT,
             `sort` INT DEFAULT 0,
             `visible` INT DEFAULT 1,
             `tkey` VARCHAR(160) DEFAULT '',

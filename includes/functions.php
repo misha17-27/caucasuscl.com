@@ -108,6 +108,36 @@ function cms_inline(string $s): string {
  * cms_body_decode()-dan fərqi: blokların SIRASI saxlanılır — abzas, siyahı,
  * yenə abzas ardıcıllığı redaktorda yazıldığı kimi çıxır.
  */
+/**
+ * FAQ mətnini sual-cavab cütlərinə ayırır.
+ *
+ *   ? Sual mətni?
+ *   Cavabın birinci sətri.
+ *   Cavabın davamı.
+ *   ? İkinci sual?
+ *   İkinci cavab.
+ *
+ * Niyə ayrıca sahə: FAQPage nişanı üçün sual və cavab AYRI lazımdır, gövdənin
+ * içindən çıxarmaq isə kövrək olardı. Panel üçün də sadə mətn qalır — HTML yox.
+ */
+function cms_faq_parse(string $raw): array {
+    $out = [];
+    $cur = null;
+    foreach (preg_split('/\r\n|\r|\n/', $raw) as $line) {
+        $line = trim($line);
+        if ($line === '') continue;
+        if (str_starts_with($line, '? ')) {
+            if ($cur && $cur['a'] !== '') $out[] = $cur;
+            $cur = ['q' => trim(substr($line, 2)), 'a' => ''];
+            continue;
+        }
+        if ($cur === null) continue;                 // cavab sualdan əvvəl gələ bilməz
+        $cur['a'] = $cur['a'] === '' ? $line : $cur['a'] . ' ' . $line;
+    }
+    if ($cur && $cur['a'] !== '') $out[] = $cur;
+    return $out;
+}
+
 function cms_body_blocks(string $body): array {
     $blocks = [];
     $open = null;                                   // açıq siyahı: ['ul'|'ol'|'cards', [...]]

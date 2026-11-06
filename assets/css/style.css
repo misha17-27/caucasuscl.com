@@ -259,6 +259,19 @@ nav.main a.on::after{content:"";position:absolute;left:14px;right:14px;bottom:2p
 .side-nav i{font-style:normal;font-size:12px;font-weight:800;opacity:.6;padding-top:2px}
 .side-cta{background:linear-gradient(160deg,var(--navy),var(--navy-l));color:#fff;border:0}
 
+/* Xidmət səhifəsindəki sual-cavab bloku */
+.faq{display:grid;gap:10px;margin:16px 0 8px}
+.faq details{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.faq summary{cursor:pointer;padding:15px 46px 15px 18px;font-weight:700;font-size:15.5px;
+  color:var(--navy);position:relative;list-style:none;line-height:1.4}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"";position:absolute;right:18px;top:50%;width:9px;height:9px;
+  border-right:2px solid var(--green);border-bottom:2px solid var(--green);
+  transform:translateY(-70%) rotate(45deg);transition:transform .2s}
+.faq details[open] summary::after{transform:translateY(-30%) rotate(225deg)}
+.faq summary:hover{background:var(--green-l)}
+.faq details p{padding:0 18px 16px;color:var(--muted);font-size:15px;margin:0}
+
 /* Xəbərin altında mövzuya uyğun xidmət keçidi (yan paneldən fərqli: tematikdir) */
 .rel-svc{margin:34px 0 10px;padding:22px 24px;background:var(--green-l);border:1px solid #cfe7da;border-radius:var(--r)}
 .rel-svc h2{font-size:17px;margin:0 0 14px;color:var(--green-d)}

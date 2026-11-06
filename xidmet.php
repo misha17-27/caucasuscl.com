@@ -42,6 +42,23 @@ $page_ld = [
         (string)$s['title'] => url('/xidmetler/' . $slug),
     ]),
 ];
+
+/* FAQPage — Google genişlənmiş nəticədə sualları göstərə bilər.
+   Nişan yalnız səhifədə HƏQİQƏTƏN görünən suallara verilir (Google tələbi),
+   ona görə eyni massivdən həm nişan, həm də blok qurulur. */
+$__faqLd = cms_faq_parse((string)($s['faq'] ?? ''));
+if ($__faqLd) {
+    $page_ld[] = [
+        '@type' => 'FAQPage',
+        'mainEntity' => array_map(static function (array $f): array {
+            return [
+                '@type' => 'Question',
+                'name'  => $f['q'],
+                'acceptedAnswer' => ['@type' => 'Answer', 'text' => $f['a']],
+            ];
+        }, $__faqLd),
+    ];
+}
 require __DIR__ . '/includes/header.php';
 
 // Qonşu xidmətlər (əvvəlki / növbəti)
@@ -71,6 +88,26 @@ $next = $i < count($keys) - 1 ? $keys[$i + 1] : null;
 
       <?php /* baza varsa mətn, yoxsa config.php-dəki hazır bölmələr */ ?>
       <?= cms_body_html($s['body'] ?? ($s['sections'] ?? '')) ?>
+
+      <?php
+      /* Tez-tez verilən suallar. Ayrıca sahədə saxlanılır (gövdədə deyil), çünki
+         FAQPage nişanı üçün sual və cavab ayrı lazımdır. Boşdursa heç nə çıxmır. */
+      $__faq = cms_faq_parse((string)($s['faq'] ?? ''));
+      if ($__faq):
+          $__faqHead = ['az' => 'Tez-tez verilən suallar',
+                        'ru' => 'Частые вопросы',
+                        'en' => 'Frequently asked questions'][LANG] ?? 'Tez-tez verilən suallar';
+      ?>
+        <h2 id="faq"><?= e(t('svc.faq', $__faqHead)) ?></h2>
+        <div class="faq">
+          <?php foreach ($__faq as $__i => $__f): ?>
+            <details<?= $__i === 0 ? ' open' : '' ?>>
+              <summary><?= e($__f['q']) ?></summary>
+              <p><?= cms_inline($__f['a']) ?></p>
+            </details>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
 
       <h2><?= e(t('svc.why')) ?></h2>
       <div class="cards2">

@@ -215,6 +215,7 @@ try {
                 'meta_desc'  => (string)$r['meta_desc'],
                 'lead'       => (string)$r['lead'],
                 'body'       => (string)$r['body'],
+                'faq'        => (string)($r['faq'] ?? ''),
                 'sections'   => cms_body_decode((string)$r['body']),
             ];
         }
