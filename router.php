@@ -17,9 +17,18 @@ $query  = $_SERVER['QUERY_STRING'] ?? '';
 /* ---------- gizli fayllar ---------- */
 if (preg_match('#^/(storage|includes|content|tools)(/|$)#', $rawUri)
     || preg_match('#(^|/)\.(git|hg|svn|env)(/|$)|^/\.cpanel\.yml$#', $rawUri)
+    || preg_match('#\.(zip|tar|gz|tgz|bz2|rar|7z|sql|sqlite|db|bak|old|swp|log)$#i', $rawUri)
     || preg_match('#^/admin/(config|config\.sample|db|schema|lib|turnstile|seed-i18n)\.php$#', $rawUri)
     || preg_match('#\.(bak|bak2|sqlite|sqlite-wal|sqlite-shm|log)$#', $rawUri)) {
     http_response_code(403); echo 'Forbidden'; return true;
+}
+
+/* ---------- köhnə WordPress-ə yerləşdirilmiş qumar spamı ----------
+   Sayt sındırılıb, həmin səhifələr Google-da indekslənib. 410 veririk:
+   404-ə nisbətən indeksdən daha tez çıxır. .htaccess-də eyni qaydalar var. */
+if (preg_match('#^/(om|vwin|bk8|w88|fun88|188bet|lode88|lodi777|mwplay[0-9]*|ph444|tf88|nn777|wjslot|th777|hit-spin|phfun|mr-bet|help-slot)-#i', $rawUri)
+    || preg_match('#(slot|casino|poker|judi|togel|taruhan|bandar|nha-cai|dang-ky|dang-nhap|mien-phi|rut-tien|nap-tien)#i', $rawUri)) {
+    http_response_code(410); echo 'Gone'; return true;
 }
 
 /* ---------- statik fayllar ---------- */

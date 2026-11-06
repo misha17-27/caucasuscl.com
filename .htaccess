@@ -36,6 +36,13 @@ AddType image/svg+xml             .svg
     RewriteRule (^|/)\.(git|hg|svn|env)(/|$) - [F,L]
     RewriteRule ^\.cpanel\.yml$ - [F,L]
 
+    # Arxiv və dump faylları. 06.11.2026-da public_html-də 39 MB-lıq
+    # `admin.zip` tapıldı — adına görə panelin mənbəyi, yəni içində
+    # `admin/config.php` (baza parolu, Turnstile və SMTP açarları) ola bilər.
+    # Server onu 403 verirdi, lakin səbəb bizim qaydamız deyildi və izah
+    # olunmayan qadağaya güvənmək olmaz.
+    RewriteRule \.(zip|tar|gz|tgz|bz2|rar|7z|sql|sqlite|db|bak|old|swp|log)$ - [F,L,NC]
+
     # Mövcud fayl və qovluqlar (admin, assets) toxunulmaz
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
@@ -73,6 +80,15 @@ AddType image/svg+xml             .svg
     RewriteRule ^wp-json(/.*)?$                          - [G,L]
     RewriteRule ^wp-(admin|includes)(/.*)?$              - [G,L]
     RewriteRule ^wp-content/(themes|plugins|cache)(/.*)?$ - [G,L]
+
+    # ---------- köhnə WordPress-ə yerləşdirilmiş spam ----------
+    # Search Console-da 129 "tapılmadı" ünvanının böyük hissəsi bunlardır:
+    # qumar və idman mövzusunda vyetnam, filippin və fransız dilində səhifələr.
+    # Sayt sındırılıb, həmin səhifələr indekslənib. Onları YÖNLƏNDİRMƏK OLMAZ —
+    # yönləndirmə spam əlaqəsini real səhifəyə ötürür. 410 verilir: Google
+    # 404-ə nisbətən 410-u indeksdən daha tez çıxarır.
+    RewriteRule ^(om|vwin|bk8|w88|fun88|188bet|lode88|lodi777|mwplay[0-9]*|ph444|tf88|nn777|wjslot|th777|hit-spin|phfun|mr-bet|help-slot)- - [G,L,NC]
+    RewriteRule (slot|casino|poker|judi|togel|taruhan|bandar|nha-cai|dang-ky|dang-nhap|mien-phi|rut-tien|nap-tien) - [G,L,NC]
 
     # ---------- sitemap ----------
     RewriteRule ^sitemap\.xml$                   sitemap.php           [L]
