@@ -158,7 +158,10 @@ if ($errors) {
     exit("\nHeç nə yazılmadı.\n");
 }
 
-$upd = $db->prepare('UPDATE `services` SET `lead` = ?, `body` = ?, `faq` = ? WHERE `lang` = ? AND `tkey` = ?');
+/* Quru sınaqda sorğu HAZIRLANMIR da: `faq` sütunu hələ yoxdursa, MySQL
+   onu məhz prepare anında yoxlayır və «Unknown column» atır. */
+$upd = $dry ? null : $db->prepare(
+    'UPDATE `services` SET `lead` = ?, `body` = ?, `faq` = ? WHERE `lang` = ? AND `tkey` = ?');
 $changed = $same = 0;
 if (!$dry) $db->beginTransaction();
 foreach ($rows as $r) {
