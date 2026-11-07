@@ -44,7 +44,9 @@ $__og    = og_image($page_image);
 <?php endforeach; ?>
 <link rel="alternate" hreflang="x-default" href="<?= e(abs_url(lang_switch_url(LANG_DEFAULT))) ?>">
 <?php /* Favicon. Köhnə variantda bura bütün üfüqi loqo (Caucasus-1.svg) qoyulmuşdu —
-         16 pikseldə oxunmayan ləkəyə çevrilirdi. İndi loqonun yalnız halqası işlənir.
+         16 pikseldə oxunmayan ləkəyə çevrilirdi. İndi loqonun emblemi bütöv
+         götürülür (halqa, qlobus, təyyarə, yük maşını), mətn hissəsi atılır.
+         Fayllar skriptlə qurulur, əl ilə redaktə edilmir — bax favicon.svg-dəki şərh.
          /favicon.ico kökdədir: brauzerlər və botlar onu teqdən asılı olmadan istəyir. */ ?>
 <link rel="icon" href="<?= e(img('favicon.svg')) ?>" type="image/svg+xml">
 <link rel="icon" href="<?= e(BASE_URL . '/favicon.ico') ?>" sizes="32x32">

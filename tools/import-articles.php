@@ -17,9 +17,15 @@
  * admin/config.php-dəki `driver` nə deyirsə) eyni nəticə ilə yazır.
  * Təkrar işə salmaq təhlükəsizdir: mövcud sətir yenilənir, dublikat yaranmır.
  *
- * Xidmət linkləri gövdədə `SVC:<tkey>` açarı ilə yazılır, məsələn
- * `[konsaltinq](SVC:konsaltinq-xidmeti)`. Skript onu hər dil üçün düzgün
- * ünvana çevirir — ünvan sxemi dəyişsə, mətnə toxunmaq lazım gəlmir.
+ * Keçidlər gövdədə açarla yazılır və hər dilin real ünvanına çevrilir:
+ *   `[konsaltinq](SVC:konsaltinq-xidmeti)`        -> xidmət səhifəsi
+ *   `[gömrük dəyəri](ART:gomruk-deyeri-nedir...)` -> başqa məqalə
+ * Ünvan sxemi dəyişsə, mətnə toxunmaq lazım gəlmir. Hər məqalədə ƏN AZI BİR
+ * xidmət keçidi olmalıdır — yoxsa skript dayanır.
+ *
+ * ART: açarı əvvəlcə bazada, tapılmasa həmin faylın özündə axtarılır: boş
+ * bazaya ilk importda məqalələr bir-birinə keçid verə bilsin (fayldakı `key`
+ * hər dildə slug kimi yazılır). Məqalənin özünə keçid qəbul edilmir.
  *
  * Yalnız komanda sətrindən işləyir — veb üzərindən açılmır.
  *
@@ -75,21 +81,52 @@ foreach ($db->query('SELECT lang, tkey, slug FROM services') as $r) {
 }
 if (!$svc) exit("services cədvəli boşdur — əvvəlcə məzmunu yükləyin.\n");
 
+/* ---- məqalələrin dil üzrə slug-ları: ART: açarlarını çevirmək üçün ---- */
+$art = [];                                          // [tkey][lang] = slug
+foreach ($db->query("SELECT lang, tkey, slug FROM news WHERE tkey <> ''") as $r) {
+    $art[(string)$r['tkey']][(string)$r['lang']] = (string)$r['slug'];
+}
+
 $LANGS = ['az', 'ru', 'en'];
 $SUFFIX = ' - Caucasuscl';
 
-/** `SVC:<tkey>` açarlarını həmin dilin real ünvanı ilə dəyişir. */
-function resolve_links(string $body, string $lang, array $svc, array &$errors, array &$used): string {
+/* Fayldaki məqalələr də xəritəyə düşür: bazada hələ yoxdursa, importer onları
+   `slug = key` kimi yazacaq, yəni ünvan indidən məlumdur. Bazadakı qeyd
+   üstündür — paneldən slug dəyişdirilmiş ola bilər. */
+foreach ($data['articles'] as $a) {
+    $k = (string)($a['key'] ?? '');
+    if ($k === '') continue;
+    foreach ($LANGS as $l) if (!isset($art[$k][$l])) $art[$k][$l] = $k;
+}
+
+/**
+ * `SVC:<tkey>` və `ART:<tkey>` açarlarını həmin dilin real ünvanı ilə dəyişir.
+ * $self — cari məqalənin açarı: özünə keçid xətadır.
+ */
+function resolve_links(string $body, string $lang, array $svc, array $art, string $self,
+                       array &$errors, array &$svcUsed, array &$artUsed): string {
     return (string)preg_replace_callback(
-        '~\]\(SVC:([a-z0-9\-]+)\)~',
-        static function (array $m) use ($lang, $svc, &$errors, &$used): string {
-            $tkey = $m[1];
-            if (!isset($svc[$tkey][$lang])) {
-                $errors[] = "bilinməyən xidmət açarı `$tkey` ($lang)";
+        '~\]\((SVC|ART):([a-z0-9\-]+)\)~',
+        static function (array $m) use ($lang, $svc, $art, $self, &$errors, &$svcUsed, &$artUsed): string {
+            [, $kind, $tkey] = $m;
+            if ($kind === 'SVC') {
+                if (!isset($svc[$tkey][$lang])) {
+                    $errors[] = "bilinməyən xidmət açarı `$tkey` ($lang)";
+                    return '](#)';
+                }
+                $svcUsed[] = $tkey;
+                return '](' . url('/xidmetler/' . $svc[$tkey][$lang], $lang) . ')';
+            }
+            if ($tkey === $self) {
+                $errors[] = "$self/$lang: məqalə özünə keçid verir";
                 return '](#)';
             }
-            $used[] = $tkey;
-            return '](' . url('/xidmetler/' . $svc[$tkey][$lang], $lang) . ')';
+            if (!isset($art[$tkey][$lang])) {
+                $errors[] = "bilinməyən məqalə açarı `$tkey` ($lang)";
+                return '](#)';
+            }
+            $artUsed[] = $tkey;
+            return '](' . url('/xeberler/' . $art[$tkey][$lang], $lang) . ')';
         },
         $body
     );
@@ -115,8 +152,9 @@ foreach ($data['articles'] as $i => $a) {
             if (trim((string)($t[$f] ?? '')) === '') $errors[] = "$key/$lang: `$f` boşdur";
         }
 
-        $used = [];
-        $body = resolve_links((string)($t['body'] ?? ''), $lang, $svc, $errors, $used);
+        $svcUsed = $artUsed = [];
+        $body = resolve_links((string)($t['body'] ?? ''), $lang, $svc, $art, $key,
+                              $errors, $svcUsed, $artUsed);
 
         /* format yoxlaması — mini-format pozulmasın */
         if (preg_match('~<\s*/?\s*(p|div|br|ul|ol|li|a|b|i|strong|em|h[1-6]|table|script)\b~i', $body)) {
@@ -124,8 +162,8 @@ foreach ($data['articles'] as $i => $a) {
         }
         if (preg_match('~^#\s~m', $body))        $errors[] = "$key/$lang: gövdədə `# ` başlığı var (h1 olmaz)";
         if (preg_match('~^\d+\.\s~m', $body))    $errors[] = "$key/$lang: gövdədə `1.` nömrələməsi var (`+ ` işlədin)";
-        if (str_contains($body, 'SVC:'))         $errors[] = "$key/$lang: həll olunmayan SVC: açarı qaldı";
-        if (!$used)                              $errors[] = "$key/$lang: daxili xidmət linki yoxdur";
+        if (preg_match('~(SVC|ART):~', $body)) $errors[] = "$key/$lang: həll olunmayan açar qaldı";
+        if (!$svcUsed)                         $errors[] = "$key/$lang: daxili xidmət linki yoxdur";
 
         $metaTitle = trim((string)($t['metaTitle'] ?? ''));
         if ($metaTitle !== '' && !str_ends_with($metaTitle, $SUFFIX)) $metaTitle .= $SUFFIX;
@@ -146,7 +184,8 @@ foreach ($data['articles'] as $i => $a) {
             'visible'    => (int)($a['visible'] ?? $defaults['visible'] ?? 1),
             'video'      => '',
             'question'   => '',
-            '_links'     => count(array_unique($used)),
+            '_links'     => count(array_unique($svcUsed)),
+            '_arts'      => count(array_unique($artUsed)),
         ];
     }
 }
@@ -178,7 +217,7 @@ foreach ($rows as $r) {
     if ($id === false) {
         if (!$dry) $ins->execute($vals);
         $new++;
-        printf("  + %-3s %-46s %2d link  %5d simvol\n", $r['lang'], $r['slug'], $r['_links'], mb_strlen($r['body']));
+        printf("  + %-3s %-46s %dx + %dm  %5d simvol\n", $r['lang'], $r['slug'], $r['_links'], $r['_arts'], mb_strlen($r['body']));
     } elseif ($onlyNew) {
         /* Avtomatik yerləşdirmədə paneldən edilmiş redaktəni geri qaytarmırıq. */
         $kept++;
@@ -186,7 +225,7 @@ foreach ($rows as $r) {
     } else {
         if (!$dry) $upd->execute(array_merge(array_slice($vals, 2), [$id]));
         $upds++;
-        printf("  ~ %-3s %-46s %2d link  %5d simvol\n", $r['lang'], $r['slug'], $r['_links'], mb_strlen($r['body']));
+        printf("  ~ %-3s %-46s %dx + %dm  %5d simvol\n", $r['lang'], $r['slug'], $r['_links'], $r['_arts'], mb_strlen($r['body']));
     }
 }
 if (!$dry) $db->commit();
