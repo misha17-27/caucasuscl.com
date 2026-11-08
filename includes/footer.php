@@ -51,6 +51,9 @@
 
 <a class="wa" href="<?= e(safe_url($CONTACT['whatsapp'])) ?>" target="_blank" rel="noopener" aria-label="WhatsApp"><?= social_icon('whatsapp') ?></a>
 
+<?php include __DIR__ . '/chat.php'; ?>
+
 <script src="<?= e(BASE_URL . '/assets/js/main.js') ?>?v=5" defer></script>
+<script src="<?= e(BASE_URL . '/assets/js/chat.js') ?>?v=1" defer></script>
 </body>
 </html>

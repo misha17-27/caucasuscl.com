@@ -389,8 +389,29 @@ function icon(string $name, string $cls = ''): string {
         'doc'    => '<path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/>',
         'truck'  => '<path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>',
         'play'   => '<circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4z"/>',
+        /* onlayn söhbət vidceti */
+        'chat'   => '<path d="M21 11.5a8.4 8.4 0 01-9 8.4 9 9 0 01-3.9-.9L3 20.5l1.6-4.7A8.3 8.3 0 013.6 11 8.4 8.4 0 0112 2.6a8.4 8.4 0 019 8.9z"/>',
+        'close'  => '<path d="M18 6L6 18M6 6l12 12"/>',
+        'restart'=> '<path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.7L3 8.5"/><path d="M3 4v4.5h4.5"/>',
+        'send'   => '<path d="M4 12l16-8-6 16-2.5-6.5L4 12z"/>',
     ];
     return $o . ($paths[$name] ?? '') . '</svg>';
+}
+
+/**
+ * Ziyarətçinin IP-si.
+ *
+ * Sayt Cloudflare-in arxasındadır: `REMOTE_ADDR` Cloudflare-in serveridir,
+ * real ünvan `CF-Connecting-IP` başlığındadır. Başlıq yalnız Cloudflare
+ * tərəfindən qoyulur, LAKİN kimsə origin-ə birbaşa müraciət edə bilsə, onu
+ * uydura bilər. Ona görə bu dəyər YALNIZ həddlərin sayılması üçün işlənir —
+ * icazə vermək və ya qadağan etmək qərarı buna əsaslanmır.
+ */
+function client_ip(): string {
+    $cf = trim((string)($_SERVER['HTTP_CF_CONNECTING_IP'] ?? ''));
+    if ($cf !== '' && filter_var($cf, FILTER_VALIDATE_IP)) return $cf;
+    $ra = trim((string)($_SERVER['REMOTE_ADDR'] ?? ''));
+    return filter_var($ra, FILTER_VALIDATE_IP) ? $ra : '';
 }
 
 /** Turnstile açarları: əvvəlcə admin panelindən, sonra config.php-dən */

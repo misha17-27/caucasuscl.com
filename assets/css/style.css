@@ -321,8 +321,11 @@ footer a:hover{color:var(--gold)}
 .f-soc svg{width:17px;height:17px}
 .f-bot{border-top:1px solid rgba(255,255,255,.1);padding:22px 0;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px}
 
-/* ---------- ÜZƏN DÜYMƏ ---------- */
-.wa{position:fixed;right:22px;bottom:22px;z-index:80;width:56px;height:56px;border-radius:50%;background:#25d366;display:grid;place-items:center;color:#fff;box-shadow:0 12px 30px -8px rgba(37,211,102,.7);transition:.25s}
+/* ---------- ÜZƏN DÜYMƏ ----------
+   Aşağıdakı guşədə iki düymə var: söhbət (aşağıda) və birbaşa WhatsApp
+   (onun üstündə). WhatsApp düyməsi saxlanılıb — kim dərhal yazmaq istəyirsə,
+   söhbətin suallarından keçməsin. Bax `.chat` bölməsi faylın sonunda. */
+.wa{position:fixed;right:22px;bottom:90px;z-index:80;width:56px;height:56px;border-radius:50%;background:#25d366;display:grid;place-items:center;color:#fff;box-shadow:0 12px 30px -8px rgba(37,211,102,.7);transition:.25s}
 .wa:hover{transform:scale(1.09)}
 .wa svg{width:28px;height:28px}
 
@@ -397,7 +400,8 @@ footer a:hover{color:var(--gold)}
      menyu açıqkən onu qaldırırıq və üzən WhatsApp düyməsini gizlədirik */
   body.nav-open{overflow:hidden}
   body.nav-open header{z-index:100}
-  body.nav-open .wa{display:none}
+  body.nav-open .wa,
+  body.nav-open .chat{display:none}
   .burger{display:block}
   .hdr-cta{display:none}
   .stats-in{grid-template-columns:1fr 1fr}
@@ -430,7 +434,7 @@ footer a:hover{color:var(--gold)}
   .marquee-t img{height:48px}
   .quote{padding:24px 20px}
   .f-bot{flex-direction:column;gap:8px}
-  .wa{width:50px;height:50px;right:16px;bottom:16px}
+  .wa{width:50px;height:50px;right:16px;bottom:78px}
   .wa svg{width:25px;height:25px}
   .map{height:300px}
   .topbar .wrap>.tb:nth-child(1){display:none}   /* mobil: yalnız telefon qalsın */
@@ -531,4 +535,69 @@ nav.main .langsel-list a.on::after{display:none}
   nav.main .nav-foot .btn{padding:10px 20px;font-size:14.5px}
   nav.main .nav-soc a{width:38px;height:38px}
   .nav-soc svg{width:17px;height:17px}
+}
+
+/* ==========================================================================
+   ONLAYN SÖHBƏT
+   Gedişat: xidmət -> ad -> telefon -> WhatsApp (bax includes/chat.php).
+   Düymə sağ aşağıda, WhatsApp düyməsinin altındadır.
+   ========================================================================== */
+.chat{position:fixed;right:22px;bottom:22px;z-index:90}
+
+.chat-btn{width:58px;height:58px;border-radius:50%;border:0;cursor:pointer;background:var(--navy);color:#fff;display:grid;place-items:center;box-shadow:0 14px 34px -10px rgba(14,47,71,.75);transition:.25s}
+.chat-btn:hover{background:var(--navy-l);transform:scale(1.07)}
+.chat-btn svg{width:26px;height:26px;grid-area:1/1;transition:.2s}
+.chat-ico-close{opacity:0;transform:rotate(-45deg) scale(.6)}
+.chat.open .chat-ico-open{opacity:0;transform:rotate(45deg) scale(.6)}
+.chat.open .chat-ico-close{opacity:1;transform:none}
+
+/* `display:flex` brauzerin [hidden] qaydasını üstələyir — ayrıca yazılır,
+   yoxsa panel səhifə açılan kimi görünür. */
+.chat-panel[hidden]{display:none}
+.chat-panel{position:absolute;right:0;bottom:72px;width:min(376px,calc(100vw - 32px));height:min(548px,calc(100vh - 150px));background:var(--white);border-radius:18px;box-shadow:0 26px 70px -18px rgba(14,47,71,.45);display:flex;flex-direction:column;overflow:hidden;animation:chatIn .22s ease-out}
+@keyframes chatIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.chat-head{display:flex;align-items:center;gap:11px;padding:13px 14px;background:var(--navy);color:#fff;flex:none}
+.chat-ava{width:40px;height:40px;border-radius:50%;background:#fff;display:grid;place-items:center;overflow:hidden;flex:none}
+.chat-ava img{width:40px;height:40px}
+.chat-id{display:flex;flex-direction:column;min-width:0;flex:1;line-height:1.3}
+.chat-id b{font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-id span{font-size:12px;opacity:.72;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-ic{width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;cursor:pointer;display:grid;place-items:center;flex:none;transition:.2s}
+.chat-ic:hover{background:rgba(255,255,255,.26)}
+.chat-ic svg{width:17px;height:17px}
+
+.chat-log{flex:1;overflow-y:auto;padding:16px 14px 6px;background:var(--bg);display:flex;flex-direction:column}
+.chat-msg{max-width:86%;padding:10px 14px;border-radius:16px;font-size:14.5px;line-height:1.5;margin-bottom:10px;white-space:pre-line;overflow-wrap:anywhere}
+.chat-bot{background:var(--white);border:1px solid var(--line);border-bottom-left-radius:5px;align-self:flex-start}
+.chat-me{background:var(--green);color:#fff;border-bottom-right-radius:5px;align-self:flex-end}
+
+.chat-opts{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px;align-self:flex-start;max-width:100%}
+.chat-opt{padding:8px 15px;border-radius:100px;border:1.5px solid var(--green);background:var(--white);color:var(--green-d);font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;transition:.2s;text-align:left}
+.chat-opt:hover{background:var(--green);color:#fff}
+
+.chat-final{flex-direction:column;align-self:stretch;gap:8px}
+.chat-wa{width:100%;padding:13px 18px;border-radius:100px;border:0;background:#25d366;color:#fff;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:.2s}
+.chat-wa:hover{background:#1fb855}
+.chat-note{font-size:12px;color:var(--muted);text-align:center}
+
+.chat-foot{display:flex;align-items:center;gap:8px;padding:10px 12px;border-top:1px solid var(--line);background:var(--white);flex:none}
+.chat-foot input[type=text]{flex:1;min-width:0;padding:11px 16px;border:1.5px solid var(--line);border-radius:100px;font-family:inherit;font-size:14.5px;background:var(--bg);color:var(--ink)}
+.chat-foot input[type=text]:focus{outline:0;border-color:var(--green);background:var(--white)}
+.chat-foot input[type=text]:disabled{opacity:.55}
+.chat-send{width:42px;height:42px;border-radius:50%;border:0;background:var(--green);color:#fff;display:grid;place-items:center;cursor:pointer;flex:none;transition:.2s}
+.chat-send:hover{background:var(--green-d)}
+.chat-send svg{width:19px;height:19px;margin-left:-2px}
+
+@media(max-width:640px){
+  .chat{right:16px;bottom:16px}
+  .chat-btn{width:52px;height:52px}
+  .chat-btn svg{width:23px;height:23px}
+  /* Telefonda panel qapağın yanında deyil, ekranın özündə açılır */
+  .chat-panel{position:fixed;right:10px;left:10px;bottom:76px;width:auto;height:min(540px,calc(100vh - 100px))}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .chat-panel{animation:none}
+  .chat-btn,.chat-btn svg,.chat-opt,.chat-wa,.chat-send{transition:none}
 }
