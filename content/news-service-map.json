@@ -24,5 +24,16 @@
   "azerbaycandan-kecen-tranzit-yukler": ["yuklerin-catdirilmasi"],
   "menshe-sertifikati-ve-tarif-guzestleri": ["sertifikatlar-ve-icazeler"],
   "beynelxalq-yuk-dasinmasi-azerbaycan": ["logistika-xidmetleri"],
-  "buraxilisdan-sonraki-yoxlama": ["konsaltinq-xidmeti"]
+  "buraxilisdan-sonraki-yoxlama": ["konsaltinq-xidmeti"],
+
+  "ozunet-elektron-gomruk-xidmetleri": ["gomruk-beyannameleri"],
+  "gomruk-dehlizleri-yasil-sari-mavi-qirmizi": ["konsaltinq-xidmeti"],
+  "incoterms-2020-sertleri": ["logistika-xidmetleri"],
+  "gomruk-beyannamesi-nece-doldurulur": ["gomruk-beyannameleri"],
+  "gomruk-proseduru-nece-secilir": ["gomruk-beyannameleri"],
+  "cinden-azerbaycana-yuk-getirmek": ["logistika-xidmetleri"],
+  "turkiyeden-idxal-marsrutlar-ve-senedler": ["logistika-xidmetleri"],
+  "muveqqeti-saxlanma-ve-gomruk-anbari": ["yuklerin-catdirilmasi"],
+  "malin-tesnifati-mubahise-olunanda": ["konsaltinq-xidmeti"],
+  "yuk-sigortasi-ve-gomruk-deyeri": ["logistika-xidmetleri"]
 }
