@@ -76,6 +76,22 @@ $artSlug = [];
 foreach ($db->query("SELECT lang, tkey, slug FROM `news` WHERE `tkey` <> ''") as $r)
     $artSlug[(string)$r['tkey']][(string)$r['lang']] = (string)$r['slug'];
 
+/* Hələ bazaya düşməmiş məqalələr də xəritəyə alınır.
+   Səbəb: xidmət səhifəsi yeni məqaləyə keçid verəndə bu skript
+   `import-articles.php`-dən ƏVVƏL işlədilsə, açar tapılmır və import
+   dayanırdı — yəni işləmə sırası gizli şərtə çevrilmişdi. Fayldakı `key`
+   həmin importer tərəfindən hər dildə slug kimi yazılır, ona görə ünvan
+   indidən məlumdur. Bazadakı qeyd üstündür: slug paneldən dəyişdirilə bilər. */
+$artFile = $ROOT . '/content/seo-articles.json';
+if (is_file($artFile)) {
+    $aj = json_decode((string)file_get_contents($artFile), true);
+    foreach (($aj['articles'] ?? []) as $a) {
+        $k = (string)($a['key'] ?? '');
+        if ($k === '') continue;
+        foreach (['az', 'ru', 'en'] as $l) if (!isset($artSlug[$k][$l])) $artSlug[$k][$l] = $k;
+    }
+}
+
 if (!$svcSlug) exit("services cədvəli boşdur.\n");
 
 function resolve_links(string $text, string $lang, array $svc, array $art, array &$errors, array &$used): string {
