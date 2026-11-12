@@ -27,6 +27,14 @@ function site_origin(): string {
           || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')
           || (int)($_SERVER['SERVER_PORT'] ?? 0) === 443;
     $host = $_SERVER['HTTP_HOST'] ?? 'caucasuscl.com';
+    /* `www.` kəsilir. Səbəb 12.11.2026-da tapıldı: www hostu bütün saytı
+       200 ilə verirdi və hər səhifə ÖZÜNƏ (www-ya) canonical yazırdı, yəni
+       231 ünvanın hamısı iki dəfə mövcud idi. Search Console-da artıq
+       www-lu ünvanlar indeksə düşmüşdü. .htaccess-də 301 var, bu isə
+       ikinci qat: yönləndirmə hər hansı səbəbdən işləməsə də, canonical,
+       hreflang və og: teqləri yenə düzgün hosta işarə edir.
+       `localhost`/`127.0.0.1` toxunulmur — `php -S` ilə sınaq pozulmasın. */
+    $host = preg_replace('~^www\.~i', '', $host);
     return $o = ($https ? 'https' : 'http') . '://' . $host;
 }
 

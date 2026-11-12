@@ -96,12 +96,25 @@ if (preg_match('#^/author/#', $path)) {
 if (preg_match('#^/wp-(json|admin|includes)#', $path)) {
     http_response_code(410); echo 'Gone'; return true;
 }
+/* Sındırma vaxtı yaradılmış təsadüfi adlı qapı səhifələri — açar sözlə
+   tutulmur, ona görə ayrıca sadalanır (.htaccess ilə eyni). */
+if (preg_match('#^/(9tsl331ru|b8ekidc7|ej9kznk15t|gofuo9jcv|o6qcttf9|oaueidf8)$#', $path)) {
+    http_response_code(410); echo 'Gone'; return true;
+}
 if ($path === '/' && preg_match('/(^|&)(p|page_id|cat|tag|m|attachment_id|author|s|feed|replytocom)=/i', $query)) {
     header('Location: ' . $pre . '/', true, 301);
     return true;
 }
 
 /* ---------- köhnə ünvanlar -> yeni sxem ---------- */
+/* Köhnə saytda bu xəbərin slug-ı tam başlıq idi (147 simvol); import zamanı
+   qısaldılıb, yönləndirmə isə qoyulmayıb. .htaccess ilə eyni. */
+if (preg_match('#^(/(?:novosti|news))?/idxal-olunan-mallara-munasibetde-gomruk-rusumlarinin'
+             . '-ve-yigilmasi-gomruk-orqanlarina-hevale-edilmis-vergilerin-hesablanmasi'
+             . '-zamani-hansi-vaxt-esas-goturulur$#', $path)) {
+    header('Location: ' . rtrim($pre . route_path('/xeberler/gomruk-rusumlari-hesablanmasi', $lang), '/') . '/', true, 301);
+    return true;
+}
 if ($path === '/category/xeberler') {
     header('Location: ' . $pre . '/' . seg('news', $lang) . '/', true, 301);
     return true;

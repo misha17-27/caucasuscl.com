@@ -18,6 +18,13 @@ AddType image/svg+xml             .svg
     RewriteEngine On
     # RewriteBase /            # alt qovluqda yerləşdirsəniz açın
 
+    # Kanonik host: www -> www-suz. 12.11.2026-a qədər www.caucasuscl.com
+    # bütün saytı 200 ilə verirdi və hər səhifənin canonical-ı öz hostuna
+    # (www-ya) işarə edirdi — yəni sayt tam dublikat idi. Search Console
+    # "Səhifələr" hesabatında www-lu ünvanlar indeksdə görünürdü.
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
     # İstifadə olunmayan HTTP metodları (XST və s.) bağlıdır
     RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK|CONNECT|PUT|DELETE|PATCH)$ [NC]
     RewriteRule .* - [F,L]
@@ -89,6 +96,10 @@ AddType image/svg+xml             .svg
     # 404-ə nisbətən 410-u indeksdən daha tez çıxarır.
     RewriteRule ^(om|vwin|bk8|w88|fun88|188bet|lode88|lodi777|mwplay[0-9]*|ph444|tf88|nn777|wjslot|th777|hit-spin|phfun|mr-bet|help-slot)- - [G,L,NC]
     RewriteRule (slot|casino|poker|judi|togel|taruhan|bandar|nha-cai|dang-ky|dang-nhap|mien-phi|rut-tien|nap-tien) - [G,L,NC]
+    # Təsadüfi adlı qapı (doorway) səhifələri. Yuxarıdakı açar sözlər bunları
+    # tutmur, ona görə 404 verirdilər. Wayback CDX-ə görə hamısı 12.2025-də,
+    # sındırma vaxtı indeksə düşüb və saytın öz məzmunu ilə əlaqəsi yoxdur.
+    RewriteRule ^(9tsl331ru|b8ekidc7|ej9kznk15t|gofuo9jcv|o6qcttf9|oaueidf8)/?$ - [G,L]
 
     # ---------- sitemap ----------
     RewriteRule ^sitemap\.xml$                   sitemap.php           [L]
@@ -97,6 +108,11 @@ AddType image/svg+xml             .svg
     RewriteRule ^[a-z_-]+-sitemap[0-9]*\.xml$    /sitemap.xml [R=301,L]
 
     # ---------- köhnə ünvanlar -> yeni sxem (router.php ilə eyni) ----------
+    # Köhnə saytda bu xəbərin slug-ı tam başlıq idi (147 simvol). İmport
+    # zamanı qısaldılıb, amma yönləndirmə qoyulmayıb — ünvan 404 verirdi.
+    # Məzmun eynidir: hədəf səhifənin H1-i həmin başlıqdır.
+    RewriteRule ^(ru/novosti/|en/news/)?idxal-olunan-mallara-munasibetde-gomruk-rusumlarinin-ve-yigilmasi-gomruk-orqanlarina-hevale-edilmis-vergilerin-hesablanmasi-zamani-hansi-vaxt-esas-goturulur/?$ /$1gomruk-rusumlari-hesablanmasi/ [R=301,L]
+
     RewriteRule ^category/xeberler/?$            /gomruk-xeberleri/ [R=301,L]
     RewriteRule ^xeberler/?$                     /gomruk-xeberleri/ [R=301,L]
     RewriteRule ^linkler/?$                      /faydali-linkler/  [R=301,L]
