@@ -18,6 +18,18 @@ require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/functions.php';
 require_once __DIR__ . '/includes/content.php';
 
+/* Bu fayl `/sitemap.xml` ünvanına yönləndirilib. Birbaşa `/sitemap.php` kimi
+   çağırılsa, eyni XML iki ünvanda yaşayır — ona görə 301. Yoxlama burada
+   aparılır, .htaccess-də deyil: orada `^sitemap\.xml$ -> sitemap.php` daxili
+   yenidən yazması ikinci dövrədə bu qaydaya düşüb sonsuz dövrə yaradardı.
+   Səhifələrin eyni qoruması request_guard() funksiyasındadır, lakin sitemap
+   header.php yükləmir. */
+if (PHP_SAPI !== 'cli' && !headers_sent()
+    && preg_match('~/sitemap\.php$~', (string)strtok((string)($_SERVER['REQUEST_URI'] ?? ''), '?'))) {
+    header('Location: ' . site_origin() . '/sitemap.xml', true, 301);
+    exit;
+}
+
 header('Content-Type: application/xml; charset=utf-8');
 
 $host = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https' : 'http')

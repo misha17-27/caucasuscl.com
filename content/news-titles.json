@@ -1,0 +1,147 @@
+{
+  "_comment": [
+    "Prezidentin fərman və sərəncamlarına dair təkrar dərclərin BAŞLIQLARI.",
+    "",
+    "Niyə lazım oldu: köhnə saytdan gələn yeddi xəbərin hamısı cəmi iki başlıq",
+    "paylaşırdı — üç səhifə «Azərbaycan Respublikası Prezidentinin Fərmanı»,",
+    "dördü «... Sərəncamı». Üç dildə bu 21 ünvan deməkdir. Search Console-da",
+    "`fermani-3` «kanonik uyğun gəlmir», `/ru/novosti/...fermani-3/` isə",
+    "«obnaruzhena, ne proindeksirovana» qrupundadır: Google onları ayırd edə",
+    "bilmir, çünki başlıq, meta başlıq və H1 eynidir.",
+    "",
+    "HƏR BAŞLIQ HƏMİN SƏTRİN ÖZ GÖVDƏSİNDƏN ÇIXARILIB — heç bir fakt, tarix,",
+    "sənəd nömrəsi və ya ad əlavə edilməmişdir. Mövzu artıq mətnin birinci",
+    "cümləsində yazılıb; biz onu sadəcə başlığa qaldırırıq.",
+    "",
+    "Slug-lara TOXUNULMUR: onlar indeksdədir, dəyişsə yeni 404-lər yaranar.",
+    "İşə salmaq: php tools/retitle-news.php --dry   (sonra --dry olmadan)"
+  ],
+  "pages": [
+    {
+      "slug": "azerbaycan-respublikasi-prezidentinin-fermani",
+      "_source": "gövdə: 2004-cü il 10 dekabr tarixli 155 nömrəli Fərmanla təsdiq edilmiş «ali xüsusi rütbəli vəzifələrin siyahısı»nda dəyişiklik",
+      "lang": {
+        "az": {
+          "title": "Gömrük orqanlarında ali xüsusi rütbəli vəzifələrin siyahısında dəyişiklik",
+          "metaTitle": "Ali xüsusi rütbəli gömrük vəzifələrində dəyişiklik - Caucasuscl"
+        },
+        "ru": {
+          "title": "Изменения в перечне должностей высшего специального звания в таможенных органах",
+          "metaTitle": "Изменения в перечне высших таможенных должностей - Caucasuscl"
+        },
+        "en": {
+          "title": "Amendments to the list of senior special-rank customs positions",
+          "metaTitle": "Amendments to senior special-rank customs positions - Caucasuscl"
+        }
+      }
+    },
+    {
+      "slug": "azerbaycan-respublikasi-prezidentinin-fermani-2",
+      "_source": "gövdə: 2012-ci il 4 iyun tarixli 646 nömrəli Fərman — Dövlət Gömrük Komitəsi haqqında Əsasnamə və komitənin strukturu",
+      "lang": {
+        "az": {
+          "title": "Dövlət Gömrük Komitəsi haqqında Əsasnamədə dəyişiklik",
+          "metaTitle": "Dövlət Gömrük Komitəsinin Əsasnaməsində dəyişiklik - Caucasuscl"
+        },
+        "ru": {
+          "title": "Изменение в Положении о Государственном таможенном комитете",
+          "metaTitle": "Изменение в Положении о таможенном комитете - Caucasuscl"
+        },
+        "en": {
+          "title": "Amendment to the Statute of the State Customs Committee",
+          "metaTitle": "Amendment to the State Customs Committee Statute - Caucasuscl"
+        }
+      }
+    },
+    {
+      "slug": "azerbaycan-respublikasi-prezidentinin-fermani-3",
+      "_source": "gövdə: 2005-ci il 16 dekabr tarixli 331 nömrəli Fərman — gömrük attaşelərinin təyin edilməsi və fəaliyyətinin təmin edilməsi",
+      "lang": {
+        "az": {
+          "title": "Gömrük attaşelərinin təyin edilməsi qaydasında dəyişiklik",
+          "metaTitle": "Gömrük attaşelərinin təyinatı qaydasında dəyişiklik - Caucasuscl"
+        },
+        "ru": {
+          "title": "Изменения в порядке назначения таможенных атташе",
+          "metaTitle": "Изменения в порядке назначения таможенных атташе - Caucasuscl"
+        },
+        "en": {
+          "title": "Amendments to the appointment of customs attachés abroad",
+          "metaTitle": "Amendments to the appointment of customs attachés - Caucasuscl"
+        }
+      }
+    },
+    {
+      "slug": "azerbaycan-respublikasi-prezidentinin-serencami",
+      "_source": "gövdə: Şahin Soltan oğlu Bağırov Dövlət Gömrük Komitəsi sədrinin birinci müavini təyin edilir",
+      "lang": {
+        "az": {
+          "title": "Şahin Bağırov Dövlət Gömrük Komitəsi sədrinin birinci müavini təyin edildi",
+          "metaTitle": "Şahin Bağırov sədrin birinci müavini təyin edildi - Caucasuscl"
+        },
+        "ru": {
+          "title": "Шахин Багиров назначен первым заместителем председателя таможенного комитета",
+          "metaTitle": "Шахин Багиров назначен первым заместителем председателя - Caucasuscl"
+        },
+        "en": {
+          "title": "Shahin Baghirov appointed First Deputy Chairman of the State Customs Committee",
+          "metaTitle": "Shahin Baghirov appointed First Deputy Chairman - Caucasuscl"
+        }
+      }
+    },
+    {
+      "slug": "azerbaycan-respublikasi-prezidentinin-serencami-2",
+      "_source": "gövdə: Səfər Məmməd oğlu Mehdiyev Dövlət Gömrük Komitəsinin sədri vəzifəsindən azad edilir",
+      "lang": {
+        "az": {
+          "title": "Səfər Mehdiyev Dövlət Gömrük Komitəsinin sədri vəzifəsindən azad edildi",
+          "metaTitle": "Səfər Mehdiyev Komitə sədri vəzifəsindən azad edildi - Caucasuscl"
+        },
+        "ru": {
+          "title": "Сафар Мехтиев освобождён от должности председателя таможенного комитета",
+          "metaTitle": "Сафар Мехтиев освобождён от должности председателя - Caucasuscl"
+        },
+        "en": {
+          "title": "Safar Mehdiyev relieved of the post of Chairman of the State Customs Committee",
+          "metaTitle": "Safar Mehdiyev relieved of the post of Chairman - Caucasuscl"
+        }
+      }
+    },
+    {
+      "slug": "azerbaycan-respublikasi-prezidentinin-serencami-3",
+      "_source": "gövdə: 1995-ci il 1 may tarixli 170 nömrəli Sərəncam — Dövlət Gömrük Komitəsi kollegiyasının tərkibi",
+      "lang": {
+        "az": {
+          "title": "Dövlət Gömrük Komitəsinin kollegiyasının tərkibində dəyişiklik",
+          "metaTitle": "Gömrük Komitəsinin kollegiya tərkibində dəyişiklik - Caucasuscl"
+        },
+        "ru": {
+          "title": "Изменение в составе коллегии Государственного таможенного комитета",
+          "metaTitle": "Изменение в составе коллегии таможенного комитета - Caucasuscl"
+        },
+        "en": {
+          "title": "Change in the composition of the State Customs Committee board",
+          "metaTitle": "Change in the State Customs Committee board - Caucasuscl"
+        }
+      }
+    },
+    {
+      "slug": "azerbaycan-respublikasi-prezidentinin-serencami-4",
+      "_source": "gövdə: Ş.S.Bağırovun 1-ci dərəcəli «Vətənə xidmətə görə» ordeni ilə təltif edilməsi. Həmçinin köhnə başlıq BÜTÜN HƏRFLƏRİ BÖYÜK yazılmışdı — düzəldilir.",
+      "lang": {
+        "az": {
+          "title": "Şahin Bağırov 1-ci dərəcəli “Vətənə xidmətə görə” ordeni ilə təltif edildi",
+          "metaTitle": "Şahin Bağırov “Vətənə xidmətə görə” ordeni ilə təltif edildi - Caucasuscl"
+        },
+        "ru": {
+          "title": "Шахин Багиров награждён орденом «За службу Отечеству» I степени",
+          "metaTitle": "Шахин Багиров награждён орденом «За службу Отечеству» - Caucasuscl"
+        },
+        "en": {
+          "title": "Shahin Baghirov awarded the Order “For Service to the Motherland”, 1st degree",
+          "metaTitle": "Shahin Baghirov awarded the Order For Service to the Motherland - Caucasuscl"
+        }
+      }
+    }
+  ]
+}

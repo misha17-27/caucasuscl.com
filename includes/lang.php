@@ -24,7 +24,15 @@ const LANGS = [
 
 /** Sorğu ünvanından dili və dilsiz yolu ayırır */
 function lang_detect(): array {
-    $uri  = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
+    /* parse_url() QƏSDƏN İŞLƏDİLMİR. `//ru/o-nas/` onun üçün protokolsuz
+       ünvandır: host `ru`, yol `/o-nas/`. Nəticədə dil itirdi (rus ünvanı
+       Azərbaycan mətni verirdi) və canonical mövcud olmayan /o-nas/ ünvanını
+       göstərirdi — 25.11.2026-da canlı saytda ölçüldü. Sorğu sətri əl ilə
+       kəsilir, artıq slash-lar yığışdırılır. */
+    $uri = (string)($_SERVER['REQUEST_URI'] ?? '/');
+    if (($qp = strpos($uri, '?')) !== false) $uri = substr($uri, 0, $qp);
+    $uri = (string)preg_replace('~/{2,}~', '/', $uri);
+    if ($uri === '') $uri = '/';
     $base = defined('BASE_URL') ? BASE_URL : '';
     if ($base !== '' && str_starts_with($uri, $base)) {
         $uri = substr($uri, strlen($base));

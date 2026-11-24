@@ -10,9 +10,20 @@ require_once __DIR__ . '/includes/compat.php';
 
 require_once __DIR__ . '/includes/routes.php';
 
-$root   = __DIR__;
-$rawUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?: '/';
+$root = __DIR__;
+/* parse_url() QƏSDƏN İŞLƏDİLMİR: `//ru/o-nas/` onun üçün protokolsuz ünvandır
+   (host `ru`, yol `/o-nas/`). Bax includes/lang.php-dəki şərh. */
+$rawUri = (string)($_SERVER['REQUEST_URI'] ?? '/');
+if (($__qp = strpos($rawUri, '?')) !== false) $rawUri = substr($rawUri, 0, $__qp);
+if ($rawUri === '') $rawUri = '/';
 $query  = $_SERVER['QUERY_STRING'] ?? '';
+
+/* Çoxqat slash -> tək slash (301). .htaccess-də eyni qayda var. */
+$__norm = (string)preg_replace('~/{2,}~', '/', $rawUri);
+if ($__norm !== $rawUri) {
+    header('Location: ' . $__norm . ($query !== '' ? '?' . $query : ''), true, 301);
+    return true;
+}
 
 /* ---------- gizli fayllar ---------- */
 if (preg_match('#^/(storage|includes|content|tools)(/|$)#', $rawUri)
@@ -101,10 +112,10 @@ if (preg_match('#^/wp-(json|admin|includes)#', $path)) {
 if (preg_match('#^/(9tsl331ru|b8ekidc7|ej9kznk15t|gofuo9jcv|o6qcttf9|oaueidf8)$#', $path)) {
     http_response_code(410); echo 'Gone'; return true;
 }
-if ($path === '/' && preg_match('/(^|&)(p|page_id|cat|tag|m|attachment_id|author|s|feed|replytocom)=/i', $query)) {
-    header('Location: ' . $pre . '/', true, 301);
-    return true;
-}
+/* WordPress-dən qalan sorğu parametrləri (`?p=`, `?cat=`, `?s=`…) BURADA
+   təmizlənmir — bu iş request_guard() funksiyasındadır (includes/functions.php),
+   ki .htaccess, router.php və PHP arasında üç fərqli davranış yaranmasın.
+   Həmin funksiya utm_* etiketlərini saxlayır, qalanını kəsir. */
 
 /* ---------- köhnə ünvanlar -> yeni sxem ---------- */
 /* Köhnə saytda bu xəbərin slug-ı tam başlıq idi (147 simvol); import zamanı

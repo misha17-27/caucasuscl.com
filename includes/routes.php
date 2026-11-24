@@ -41,6 +41,34 @@ const ROUTE_SEGMENTS = [
     ],
 ];
 
+/**
+ * Təkrar dərc olunmuş xəbərlər: dublikat slug -> əsl slug.
+ *
+ * Köhnə WordPress-dən bir sual iki dəfə gəlmişdi. Hər iki sətir eyni YouTube
+ * videosuna (`0hVEXBQUixA`), eyni sual mətninə və eyni dərc tarixinə sahibdir,
+ * gövdə hər ikisində boşdur — fərqləndirici heç nə yoxdur. Search Console bu
+ * ünvanı «kanonik uyğun gəlmir» qrupuna salıb.
+ *
+ * Dublikat 301 ilə əsl ünvana gedir (bax xeber.php), xəbər siyahısından və
+ * sitemap-dan isə ümumiyyətlə çıxır (bax includes/content.php) — əks halda
+ * sitemap yönləndirmə verən ünvanı göstərərdi. Slug üç dildə eynidir, ona görə
+ * xəritə dilsizdir.
+ */
+const NEWS_DUPLICATES = [
+    'mallarin-daxilde-emal-xususi-gomruk-proseduru-altinda-yerlesdirilmesi-ucun-sertler-hansilardir-2'
+        => 'mallarin-daxilde-emal-xususi-gomruk-proseduru-altinda-yerlesdirilmesi-ucun-sertler-hansilardir',
+];
+
+/**
+ * Bu slug dublikatdırsa — əsl slug, deyilsə boş sətir.
+ * Massiv əvvəlcə dəyişənə yazılır: PHP `isset(SABİT['açar'])` yazılışını
+ * qəbul etmir.
+ */
+function news_duplicate_of(string $slug): string {
+    $map = NEWS_DUPLICATES;
+    return (string)($map[$slug] ?? '');
+}
+
 function seg(string $key, ?string $lang = null): string {
     $lang = $lang ?? (defined('LANG') ? LANG : 'az');
     return ROUTE_SEGMENTS[$lang][$key] ?? ROUTE_SEGMENTS['az'][$key] ?? '';

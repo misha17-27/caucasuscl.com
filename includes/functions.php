@@ -57,6 +57,109 @@ function canonical_url(string $override = ''): string {
 }
 
 /**
+ * Sorğu ünvanının kanonikliyini təmin edir.
+ *
+ * HƏR HTML səhifəsinin ən başında, hər hansı çıxışdan ƏVVƏL çağırılır —
+ * bax includes/header.php. Bir dəfə işləyir (404.php yenidən header.php
+ * yüklədiyi üçün `static` sayğac lazımdır).
+ *
+ * NİYƏ .htaccess-də DEYİL:
+ *   1. .htaccess ilə router.php arasında eyni qaydanı iki dəfə yazmaq
+ *      lazım gəlir və onlar vaxt keçdikcə ayrılır — 25.11.2026-da məhz belə
+ *      üç uyğunsuzluq tapıldı (`?p=`, lentlər, kateqoriyalar).
+ *   2. .htaccess-də bu qaydalar daxili yenidən yazmadan sonra TƏKRAR işə
+ *      düşür (`^haqqimizda/?$ -> haqqimizda.php` ikinci dövrədə yenə bu
+ *      fayla baxır), ona görə `.php` ünvanını orada 301 etmək sonsuz
+ *      yönləndirmə riski yaradır. PHP isə orijinal REQUEST_URI-ni görür.
+ *
+ * Üç fərqli nasazlığı bağlayır (hamısı 25.11.2026-da canlı saytda ölçülüb):
+ *   · `/haqqimizda.php` və digər şablonlar 200 verirdi, TAM məzmunu
+ *     göstərirdi və canonical kimi ANA SƏHİFƏNİ yazırdı (çünki route_match
+ *     `.php` yolunu tanımır və lang_switch_url kökə qayıdır) — altı ünvan
+ *     özünü başqa səhifə kimi təqdim edirdi.
+ *   · `/index.php/om-casino/` 200 verirdi: server PATH_INFO-nu kəsib
+ *     index.php-ni işə salır, yəni istənilən uydurma yol ana səhifəni açır.
+ *   · `?p=1`, `?cat=3`, `?s=...` kimi WordPress parametrləri hər səhifənin
+ *     sonsuz dublikatını yaradırdı.
+ */
+function request_guard(): void
+{
+    static $done = false;
+    if ($done || PHP_SAPI === 'cli' || headers_sent()) return;
+    $done = true;
+
+    $uri = (string)($_SERVER['REQUEST_URI'] ?? '/');
+    if ($uri === '' || preg_match('~[\r\n\x00]~', $uri)) return;   // başlıq inyeksiyası
+
+    /* parse_url() QƏSDƏN İŞLƏDİLMİR: `//ru/o-nas/` onun üçün protokolsuz
+       ünvandır (host `ru`, yol `/o-nas/`), yəni yolun birinci seqmenti itir.
+       Sorğu sətri əl ilə kəsilir. */
+    $qpos  = strpos($uri, '?');
+    $path  = $qpos === false ? $uri : substr($uri, 0, $qpos);
+    $query = $qpos === false ? '' : substr($uri, $qpos + 1);
+
+    /* 1. Çoxqat slash (`//ru/o-nas/`, `///haqqimizda/`) */
+    $norm = (string)preg_replace('~/{2,}~', '/', $path);
+    if ($norm !== $path) {
+        header('Location: ' . abs_url($norm) . ($query !== '' ? '?' . $query : ''), true, 301);
+        exit;
+    }
+
+    /* 2. Şablon adından sonra uydurma yol — PATH_INFO. Yönləndirmə YOX:
+       spam ünvanını real səhifəyə yönləndirmək onun siqnalını bizim
+       səhifəyə ötürür (eyni səbəb .htaccess-dəki 410 qaydalarında yazılıb). */
+    if (preg_match('~\.php/~i', $path)) {
+        http_response_code(404);
+        header('Content-Type: text/plain; charset=utf-8');
+        header('X-Robots-Tag: noindex');
+        echo "Not Found\n";
+        exit;
+    }
+
+    /* 3. Şablona birbaşa müraciət -> həmin səhifənin kanonik ünvanı.
+       Siyahıda olmayan `.php` (xeber.php, xidmet.php, 404.php) onsuz da
+       slug olmadan 404 verir — ona toxunmuruq. */
+    $base = defined('BASE_URL') ? (string)BASE_URL : '';
+    $rel  = ($base !== '' && strpos($path, $base) === 0) ? substr($path, strlen($base)) : $path;
+    $tpl  = [
+        'index.php'      => '/',
+        'haqqimizda.php' => '/haqqimizda',
+        'xidmetler.php'  => '/xidmetler',
+        'xeberler.php'   => '/xeberler',
+        'elaqe.php'      => '/elaqe',
+        'linkler.php'    => '/linkler',
+    ];
+    $file = strtolower(basename($rel));
+    if (isset($tpl[$file])) {
+        header('Location: ' . abs_url(url($tpl[$file])), true, 301);
+        exit;
+    }
+
+    /* 4. Dublikat yaradan sorğu parametrləri. utm_* və digərləri SAXLANILIR —
+       reklam kampaniyalarının etiketləri itməməlidir.
+       `slug` DAXİLİ parametrdir: onu .htaccess (və router.php) özü qoyur, yolun
+       içindən çıxarır. Ünvanda açıq yazılması yalnız dublikat deməkdir —
+       `/ozunet-elektron-gomruk-xidmetleri/?slug=incoterms-2020-sertleri` eyni
+       səhifəni ikinci ünvanda verirdi. (25.11.2026-a qədər `[QSA]` ucbatından
+       o, hətta ÖZGƏ məqalənin mətnini verirdi; QSA götürüldü, bu isə ikinci
+       qat — ünvanın özü təmizlənir.) */
+    if ($query !== '') {
+        $wp = ['p', 'page_id', 'cat', 'tag', 'm', 'attachment_id', 'author', 's', 'feed', 'replytocom', 'slug'];
+        $q  = [];
+        parse_str($query, $q);
+        $hit = false;
+        foreach ($wp as $k) {
+            if (array_key_exists($k, $q)) { $hit = true; unset($q[$k]); }
+        }
+        if ($hit) {
+            $rest = http_build_query($q);
+            header('Location: ' . abs_url($path) . ($rest !== '' ? '?' . $rest : ''), true, 301);
+            exit;
+        }
+    }
+}
+
+/**
  * Bazadan gələn xarici ünvanı təhlükəsiz hala gətirir.
  * Yalnız http(s), mailto və tel sxemlərinə icazə verilir — `javascript:` və
  * `data:` kimi sxemlər boş sətrə çevrilir.

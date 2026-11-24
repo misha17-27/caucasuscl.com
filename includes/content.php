@@ -235,6 +235,10 @@ try {
 
         $NEWS = [];
         foreach ($rows as $r) {
+            /* Dublikat ünvan nə siyahıda, nə sitemap-da görünməməlidir —
+               ona 301 verilir (bax includes/routes.php → NEWS_DUPLICATES). */
+            if (function_exists('news_duplicate_of')
+                && news_duplicate_of((string)$r['slug']) !== '') continue;
             $img = trim((string)($r['image'] ?? ''));
             if ($img === '') $img = $__cover[(string)($r['tkey'] ?? '')] ?? '';
             $NEWS[$r['slug']] = [

@@ -5,6 +5,17 @@ require_once __DIR__ . '/includes/functions.php';
 
 $slug = isset($_GET['slug']) ? preg_replace('/[^a-z0-9\-]/', '', (string)$_GET['slug']) : '';
 
+/* Dublikat ünvan -> əsl ünvan. $NEWS-dən çıxarıldığı üçün bu yoxlama
+   siyahı axtarışından ƏVVƏL olmalıdır, yoxsa 404 verər.
+   Bax includes/routes.php → NEWS_DUPLICATES. */
+if ($slug !== '' && function_exists('news_duplicate_of')) {
+    $__dup = news_duplicate_of($slug);
+    if ($__dup !== '') {
+        header('Location: ' . abs_url(url('/xeberler/' . $__dup)), true, 301);
+        exit;
+    }
+}
+
 if ($slug === '' || !isset($NEWS[$slug])) {
     /* Başqa dildəki slug ilə gəliblərsə — 404 yerinə 301 */
     if ($slug !== '' && function_exists('cms_find_slug')) {

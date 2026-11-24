@@ -2,6 +2,10 @@
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/functions.php';
 
+/* Ünvanın kanonikliyi — hər hansı çıxışdan ƏVVƏL olmalıdır, çünki funksiya
+   lazım gələndə 301 və ya 404 göndərir. Bax functions.php → request_guard(). */
+request_guard();
+
 if (!defined('PAGE_KEY'))   define('PAGE_KEY', '');
 if (!isset($page_title))    $page_title = SITE_NAME . ' — ' . cms_text('site_slogan', SITE_SLOGAN);
 if (!isset($page_desc))     $page_desc  = t('page.svc.text');

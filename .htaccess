@@ -25,6 +25,16 @@ AddType image/svg+xml             .svg
     RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
     RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
 
+    # Çoxqat slash: //ru/o-nas/ -> /ru/o-nas/
+    # 25.11.2026-da tapıldı. PHP-nin parse_url() funksiyası `//ru/o-nas/`
+    # sətrini PROTOKOLSUZ ünvan kimi oxuyur: host `ru`, yol `/o-nas/`. Nəticədə
+    # səhifə 200 verirdi, lakin dili itirirdi (rus ünvanı Azərbaycan mətni
+    # göstərirdi) və canonical mövcud olmayan /o-nas/ ünvanını yazırdı.
+    # `//xidmetler/<slug>/` isə canonical kimi 404 verən /<slug>/ göstərirdi.
+    # PHP tərəfində də qoruma var (request_guard), bu birinci səddir.
+    RewriteCond %{REQUEST_URI} ^//+(.*)$
+    RewriteRule ^ /%1 [R=301,L]
+
     # İstifadə olunmayan HTTP metodları (XST və s.) bağlıdır
     RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK|CONNECT|PUT|DELETE|PATCH)$ [NC]
     RewriteRule .* - [F,L]
@@ -50,6 +60,32 @@ AddType image/svg+xml             .svg
     # olunmayan qadağaya güvənmək olmaz.
     RewriteRule \.(zip|tar|gz|tgz|bz2|rar|7z|sql|sqlite|db|bak|old|swp|log)$ - [F,L,NC]
 
+    # ---------- SİLİNMİŞ ÜNVANLAR: 410 ----------
+    # DİQQƏT — SIRA MÜHÜMDÜR. Bu bloka aşağıdaki «mövcud fayl» ötürməsindən
+    # ƏVVƏL baxılmalıdır. 25.11.2026-a qədər o, aşağıda idi və `[L]` onu
+    # tamamilə susdurmuşdu: `/om-casino/` 410 verirdi, `/index.php/om-casino/`
+    # isə 200 — yəni prefiksi dəyişdirməklə qumar spamı üçün sonsuz ünvan
+    # fəzası açıq qalırdı (`/xeberler.php/casino/` də 200 verirdi). Qayda
+    # mövcud faylın özünə toxunmur, çünki sayt kökündə bu açar sözlərlə
+    # kəsişən fayl və qovluq yoxdur — yoxlanılıb.
+
+    # köhnə WordPress-ə yerləşdirilmiş spam. Search Console-da «tapılmadı»
+    # ünvanlarının böyük hissəsi bunlardır: qumar və idman mövzusunda vyetnam,
+    # filippin və fransız dilində səhifələr. Sayt sındırılıb, həmin səhifələr
+    # indekslənib. Onları YÖNLƏNDİRMƏK OLMAZ — yönləndirmə spam əlaqəsini real
+    # səhifəyə ötürür. 410 verilir: Google onu 404-dən tez indeksdən çıxarır.
+    RewriteRule ^(om|vwin|bk8|w88|fun88|188bet|lode88|lodi777|mwplay[0-9]*|ph444|tf88|nn777|wjslot|th777|hit-spin|phfun|mr-bet|help-slot)- - [G,L,NC]
+    RewriteRule (slot|casino|poker|judi|togel|taruhan|bandar|nha-cai|dang-ky|dang-nhap|mien-phi|rut-tien|nap-tien) - [G,L,NC]
+    # Təsadüfi adlı qapı (doorway) səhifələri. Yuxarıdakı açar sözlər bunları
+    # tutmur, ona görə 404 verirdilər. Wayback CDX-ə görə hamısı 12.2025-də,
+    # sındırma vaxtı indeksə düşüb və saytın öz məzmunu ilə əlaqəsi yoxdur.
+    RewriteRule ^(9tsl331ru|b8ekidc7|ej9kznk15t|gofuo9jcv|o6qcttf9|oaueidf8)/?$ - [G,L]
+    # WordPress-in texniki ünvanları — məzmun deyil, birbaşa «silinib».
+    # `wp-content/uploads/` TOXUNULMUR: köhnə şəkil linkləri sınmasın.
+    RewriteRule ^wp-json(/.*)?$                           - [G,L]
+    RewriteRule ^wp-(admin|includes)(/.*)?$               - [G,L]
+    RewriteRule ^wp-content/(themes|plugins|cache)(/.*)?$ - [G,L]
+
     # Mövcud fayl və qovluqlar (admin, assets) toxunulmaz
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
@@ -65,41 +101,44 @@ AddType image/svg+xml             .svg
     # Köhnə saytdan indeksdə qalan yüzlərlə ünvan var. Uyğun məzmun varsa
     # 301 veririk, yoxdursa 404/410 — hər ikisi Google üçün düzgün siqnaldır.
 
-    # Sorğu parametrli köhnə ünvanlar (?p=12, ?cat=3, ?s=...) — dublikat yaradır
-    RewriteCond %{QUERY_STRING} (^|&)(p|page_id|cat|tag|m|attachment_id|author|s|feed|replytocom)=([^&]*) [NC]
-    RewriteRule ^$ /? [R=301,L]
+    # Sorğu parametrli köhnə ünvanlar (?p=12, ?cat=3, ?s=...) BURADA DEYİL.
+    # Onlar PHP-də, request_guard() funksiyasında təmizlənir (includes/functions.php).
+    # Səbəb: burada yazılmış qayda `^$` ilə yalnız kök ünvana baxırdı, kök isə
+    # mövcud QOVLUQ olduğu üçün yuxarıdaki `-d` ötürməsi ona heç vaxt çatmağa
+    # imkan vermirdi — `/?p=1` iki həftə 301 yerinə 200 verdi. Qaydanı yuxarı
+    # qaldırmaq yerinə bir yerdə, PHP-də saxlamaq seçildi: .htaccess və
+    # router.php arasında növbəti uyğunsuzluq yaranmasın.
 
     # Xəbər arxivinin səhifələnməsi: /gomruk-xeberleri/2/ və /page/2/
     RewriteRule ^(gomruk-xeberleri|xeberler)/(page/)?[0-9]+/?$  /gomruk-xeberleri/   [R=301,L]
     RewriteRule ^ru/(novosti|xeberler)/(page/)?[0-9]+/?$        /ru/novosti/         [R=301,L]
     RewriteRule ^en/(news|xeberler)/(page/)?[0-9]+/?$           /en/news/            [R=301,L]
-    RewriteRule ^page/[0-9]+/?$                                 /                    [R=301,L]
+    # `/page/2/` xəbər arxivinin ikinci səhifəsi idi, ana səhifə deyil.
+    # 25.11.2026-a qədər burada `/` yazılmışdı, router.php-də isə xəbər
+    # siyahısı — yəni iki fayl eyni ünvanı iki yerə göndərirdi.
+    RewriteRule ^page/[0-9]+/?$                                 /gomruk-xeberleri/   [R=301,L]
 
-    # Lentlər (RSS)
-    RewriteRule ^(.+/)?feed/?$          /gomruk-xeberleri/ [R=301,L]
-    RewriteRule ^(rss|rss2|atom)/?$     /gomruk-xeberleri/ [R=301,L]
+    # ---------- RU/EN: köhnə arxiv ünvanları ----------
+    # DİL İTMƏMƏLİDİR. 25.11.2026-a qədər aşağıdaki AZ qaydaları prefiksə
+    # baxmırdı: `/ru/novosti/feed/` istifadəçini Azərbaycan siyahısına atırdı,
+    # `/ru/tag/...`, `/en/category/...`, `/ru/author/...` və `/ru/page/2/` isə
+    # ümumiyyətlə 404 verirdi. router.php bunların hamısını düzgün edirdi —
+    # yəni səhv yalnız bu fayldaydı.
+    RewriteRule ^ru/(.+/)?(feed|rss|rss2|atom)/?$        /ru/novosti/  [R=301,L]
+    RewriteRule ^ru/(category|tag|etiket)(/.*)?$         /ru/novosti/  [R=301,L]
+    RewriteRule ^ru/author(/.*)?$                        /ru/o-nas/    [R=301,L]
+    RewriteRule ^ru/page/[0-9]+/?$                       /ru/novosti/  [R=301,L]
 
-    # Kateqoriya, etiket və müəllif arxivləri
-    RewriteRule ^(category|tag|etiket)/.*$   /gomruk-xeberleri/ [R=301,L]
-    RewriteRule ^author/.*$                  /haqqimizda/       [R=301,L]
+    RewriteRule ^en/(.+/)?(feed|rss|rss2|atom)/?$        /en/news/     [R=301,L]
+    RewriteRule ^en/(category|tag|etiket)(/.*)?$         /en/news/     [R=301,L]
+    RewriteRule ^en/author(/.*)?$                        /en/about-us/ [R=301,L]
+    RewriteRule ^en/page/[0-9]+/?$                       /en/news/     [R=301,L]
 
-    # WordPress-in texniki ünvanları — məzmun deyil, birbaşa "silinib"
-    RewriteRule ^wp-json(/.*)?$                          - [G,L]
-    RewriteRule ^wp-(admin|includes)(/.*)?$              - [G,L]
-    RewriteRule ^wp-content/(themes|plugins|cache)(/.*)?$ - [G,L]
-
-    # ---------- köhnə WordPress-ə yerləşdirilmiş spam ----------
-    # Search Console-da 129 "tapılmadı" ünvanının böyük hissəsi bunlardır:
-    # qumar və idman mövzusunda vyetnam, filippin və fransız dilində səhifələr.
-    # Sayt sındırılıb, həmin səhifələr indekslənib. Onları YÖNLƏNDİRMƏK OLMAZ —
-    # yönləndirmə spam əlaqəsini real səhifəyə ötürür. 410 verilir: Google
-    # 404-ə nisbətən 410-u indeksdən daha tez çıxarır.
-    RewriteRule ^(om|vwin|bk8|w88|fun88|188bet|lode88|lodi777|mwplay[0-9]*|ph444|tf88|nn777|wjslot|th777|hit-spin|phfun|mr-bet|help-slot)- - [G,L,NC]
-    RewriteRule (slot|casino|poker|judi|togel|taruhan|bandar|nha-cai|dang-ky|dang-nhap|mien-phi|rut-tien|nap-tien) - [G,L,NC]
-    # Təsadüfi adlı qapı (doorway) səhifələri. Yuxarıdakı açar sözlər bunları
-    # tutmur, ona görə 404 verirdilər. Wayback CDX-ə görə hamısı 12.2025-də,
-    # sındırma vaxtı indeksə düşüb və saytın öz məzmunu ilə əlaqəsi yoxdur.
-    RewriteRule ^(9tsl331ru|b8ekidc7|ej9kznk15t|gofuo9jcv|o6qcttf9|oaueidf8)/?$ - [G,L]
+    # ---------- AZ: köhnə arxiv ünvanları ----------
+    RewriteRule ^(.+/)?feed/?$               /gomruk-xeberleri/ [R=301,L]
+    RewriteRule ^(rss|rss2|atom)/?$          /gomruk-xeberleri/ [R=301,L]
+    RewriteRule ^(category|tag|etiket)(/.*)?$ /gomruk-xeberleri/ [R=301,L]
+    RewriteRule ^author(/.*)?$               /haqqimizda/       [R=301,L]
 
     # ---------- sitemap ----------
     RewriteRule ^sitemap\.xml$                   sitemap.php           [L]
@@ -113,28 +152,37 @@ AddType image/svg+xml             .svg
     # Məzmun eynidir: hədəf səhifənin H1-i həmin başlıqdır.
     RewriteRule ^(ru/novosti/|en/news/)?idxal-olunan-mallara-munasibetde-gomruk-rusumlarinin-ve-yigilmasi-gomruk-orqanlarina-hevale-edilmis-vergilerin-hesablanmasi-zamani-hansi-vaxt-esas-goturulur/?$ /$1gomruk-rusumlari-hesablanmasi/ [R=301,L]
 
-    RewriteRule ^category/xeberler/?$            /gomruk-xeberleri/ [R=301,L]
+    # `category/xeberler` ayrıca yazılmırdı — yuxarıdaki geniş `category|tag`
+    # qaydaları onu hər üç dildə tutur.
     RewriteRule ^xeberler/?$                     /gomruk-xeberleri/ [R=301,L]
     RewriteRule ^linkler/?$                      /faydali-linkler/  [R=301,L]
     RewriteRule ^xeberler/([a-z0-9-]+)/?$        /$1/               [R=301,L]
 
-    RewriteRule ^ru/category/xeberler/?$         /ru/novosti/          [R=301,L]
     RewriteRule ^ru/xeberler/?$                  /ru/novosti/          [R=301,L]
     RewriteRule ^ru/linkler/?$                   /ru/poleznye-ssylki/  [R=301,L]
     RewriteRule ^ru/xeberler/([a-z0-9-]+)/?$     /ru/novosti/$1/       [R=301,L]
 
-    RewriteRule ^en/category/xeberler/?$         /en/news/         [R=301,L]
     RewriteRule ^en/xeberler/?$                  /en/news/         [R=301,L]
     RewriteRule ^en/linkler/?$                   /en/useful-links/ [R=301,L]
     RewriteRule ^en/xeberler/([a-z0-9-]+)/?$     /en/news/$1/      [R=301,L]
+
+    # ---------- marşrutlar ----------
+    # `[QSA]` QƏSDƏN YOXDUR. 25.11.2026-da tapıldı: QSA ziyarətçinin sorğu
+    # sətrini bizim yazdığımızın ARXASINA əlavə edir, PHP isə təkrarlanan
+    # parametrdən SONUNCUnu götürür. Yəni `?slug=...` ünvanda yazılan dəyər
+    # bizimkini üstələyirdi: `/ozunet-elektron-gomruk-xidmetleri/?slug=incoterms-2020-sertleri`
+    # Incoterms məqaləsinin bütün mətnini verirdi, canonical isə ÖZGƏ ünvanı
+    # göstərirdi — yəni hər məqalə hər hansı başqa ünvan altında açıla bilirdi.
+    # Saytın heç bir açıq səhifəsi `slug`-dan başqa GET parametri oxumur
+    # (yoxlanılıb), ona görə QSA-ya ehtiyac yoxdur.
 
     # ---------- EN ----------
     RewriteRule ^en/?$                           index.php       [L]
     RewriteRule ^en/about-us/?$                  haqqimizda.php  [L]
     RewriteRule ^en/services/?$                  xidmetler.php   [L]
-    RewriteRule ^en/services/([a-z0-9-]+)/?$     xidmet.php?slug=$1 [L,QSA]
+    RewriteRule ^en/services/([a-z0-9-]+)/?$     xidmet.php?slug=$1 [L]
     RewriteRule ^en/news/?$                      xeberler.php    [L]
-    RewriteRule ^en/news/([a-z0-9-]+)/?$         xeber.php?slug=$1  [L,QSA]
+    RewriteRule ^en/news/([a-z0-9-]+)/?$         xeber.php?slug=$1  [L]
     RewriteRule ^en/contact/?$                   elaqe.php       [L]
     RewriteRule ^en/useful-links/?$              linkler.php     [L]
 
@@ -142,22 +190,22 @@ AddType image/svg+xml             .svg
     RewriteRule ^ru/?$                           index.php       [L]
     RewriteRule ^ru/o-nas/?$                     haqqimizda.php  [L]
     RewriteRule ^ru/uslugi/?$                    xidmetler.php   [L]
-    RewriteRule ^ru/xidmetler/([a-z0-9-]+)/?$    xidmet.php?slug=$1 [L,QSA]
+    RewriteRule ^ru/xidmetler/([a-z0-9-]+)/?$    xidmet.php?slug=$1 [L]
     RewriteRule ^ru/novosti/?$                   xeberler.php    [L]
-    RewriteRule ^ru/novosti/([a-z0-9-]+)/?$      xeber.php?slug=$1  [L,QSA]
+    RewriteRule ^ru/novosti/([a-z0-9-]+)/?$      xeber.php?slug=$1  [L]
     RewriteRule ^ru/kontakty/?$                  elaqe.php       [L]
     RewriteRule ^ru/poleznye-ssylki/?$           linkler.php     [L]
 
     # ---------- AZ ----------
     RewriteRule ^haqqimizda/?$                   haqqimizda.php  [L]
     RewriteRule ^xidmetler/?$                    xidmetler.php   [L]
-    RewriteRule ^xidmetler/([a-z0-9-]+)/?$       xidmet.php?slug=$1 [L,QSA]
+    RewriteRule ^xidmetler/([a-z0-9-]+)/?$       xidmet.php?slug=$1 [L]
     RewriteRule ^gomruk-xeberleri/?$             xeberler.php    [L]
     RewriteRule ^elaqe/?$                        elaqe.php       [L]
     RewriteRule ^faydali-linkler/?$              linkler.php     [L]
 
     # AZ xəbərləri kökdə — ən sonda, qalan hər şeyi tutur
-    RewriteRule ^([a-z0-9-]{6,})/?$              xeber.php?slug=$1 [L,QSA]
+    RewriteRule ^([a-z0-9-]{6,})/?$              xeber.php?slug=$1 [L]
 </IfModule>
 
 ErrorDocument 404 /404.php
