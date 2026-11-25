@@ -455,6 +455,28 @@ function excerpt(string $s, int $len = 120): string {
     return mb_substr($s, 0, $len) . '…';
 }
 
+/**
+ * Mətni SÖZ SƏRHƏDİNDƏ kəsir — schema.org nişanları üçün.
+ *
+ * `excerpt()` kifayət etmir: o, hərfin ortasından kəsir. Nişanda bu daha
+ * pisdir, çünki ora oxucuya deyil, maşına gedir: `NewsArticle.headline`
+ * (Google 110 simvol məsləhət görür) uzun başlıqlarda söz ortasından
+ * kəsilirdi, `FAQPage`-in sualı isə 250-də — dini ədəbiyyat haqqındaki
+ * rəsmi sual 266 simvoldur, yəni cümlə yarımçıq qalırdı.
+ *
+ * Həddən qısa olmayan mətn olduğu kimi qaytarılır; kəsmək lazım gələndə
+ * son tam sözə qədər kəsilir.
+ */
+function clip_words(string $s, int $len): string {
+    $s = trim((string)preg_replace('/\s+/u', ' ', $s));
+    if ($len < 1 || mb_strlen($s) <= $len) return $s;
+    $cut = mb_substr($s, 0, $len);
+    $sp  = mb_strrpos($cut, ' ');
+    /* Tək söz həddən uzundursa, çarəsiz, hərfdən kəsilir. */
+    if ($sp !== false && $sp > (int)($len * 0.5)) $cut = mb_substr($cut, 0, $sp);
+    return rtrim($cut, " ,;:—-") . '…';
+}
+
 /** Çoxsətirli mətni boş olmayan sətirlərə bölür */
 function lines(string $s): array {
     $out = [];

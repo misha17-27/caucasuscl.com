@@ -14,7 +14,12 @@
     "cümləsində yazılıb; biz onu sadəcə başlığa qaldırırıq.",
     "",
     "Slug-lara TOXUNULMUR: onlar indeksdədir, dəyişsə yeni 404-lər yaranar.",
-    "İşə salmaq: php tools/retitle-news.php --dry   (sonra --dry olmadan)"
+    "İşə salmaq: php tools/retitle-news.php --dry   (sonra --dry olmadan)",
+    "",
+    "SÜTUNUN SAHİBİ: bu fayl yalnız `title` yazır. `meta_title`, `meta_desc`,",
+    "`excerpt`, `question` və `body` isə content/news-bodies.json + ",
+    "tools/import-news-bodies.php tərəfindən idarə olunur. Eyni sütunu iki",
+    "alətə vermək olmaz — biri digərinin işini geri qaytarar."
   ],
   "pages": [
     {
@@ -141,6 +146,15 @@
           "title": "Shahin Baghirov awarded the Order “For Service to the Motherland”, 1st degree",
           "metaTitle": "Shahin Baghirov awarded the Order For Service to the Motherland - Caucasuscl"
         }
+      }
+    },
+    {
+      "slug": "mallarin-gomruk-ekspertizasi-neye-asasen-aparilir",
+      "_source": "YALNIZ ORFOQRAFİYA. Azərbaycan başlığında «nəyə asasən» yazılıb — düzgünü «nəyə əsasən»dir. Bu, həm H1, həm <title> kimi görünürdü. Slug köhnə yazılışı saxlayır (indeksdədir, dəyişmir). RU və EN başlıqları səhvsizdir, ona görə onlar olduğu kimi təkrarlanır — alət dəyişiklik görməyib keçəcək.",
+      "lang": {
+        "az": { "title": "Malların gömrük ekspertizası nəyə əsasən aparılır?" },
+        "ru": { "title": "На каком основании проводится таможенная экспертиза товаров?" },
+        "en": { "title": "On what basis is a customs examination of goods carried out?" }
       }
     }
   ]

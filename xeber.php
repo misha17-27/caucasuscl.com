@@ -44,7 +44,7 @@ $__body = trim((string)($n['body'] ?? ''));
 $page_ld = [
     [
         '@type'            => 'NewsArticle',
-        'headline'         => mb_substr((string)$n['title'], 0, 110),
+        'headline'         => clip_words((string)$n['title'], 110),
         'description'      => excerpt((string)$n['excerpt'], 300),
         'datePublished'    => (string)$n['date'],
         'dateModified'     => (string)$n['date'],
@@ -68,7 +68,7 @@ if (!empty($n['video'])) {
     $vid = (string)$n['video'];
     $page_ld[] = [
         '@type'        => 'VideoObject',
-        'name'         => mb_substr((string)$n['title'], 0, 110),
+        'name'         => clip_words((string)$n['title'], 110),
         'description'  => excerpt((string)($n['question'] ?: $n['excerpt']), 300),
         'thumbnailUrl' => ['https://i.ytimg.com/vi/' . rawurlencode($vid) . '/hqdefault.jpg'],
         'uploadDate'   => (string)$n['date'],
@@ -84,7 +84,7 @@ if ($__isQA && $__body !== '') {
         '@type' => 'FAQPage',
         'mainEntity' => [[
             '@type' => 'Question',
-            'name'  => mb_substr((string)$n['question'], 0, 250),
+            'name'  => clip_words((string)$n['question'], 300),
             'acceptedAnswer' => ['@type' => 'Answer', 'text' => excerpt($__body, 900)],
         ]],
     ];

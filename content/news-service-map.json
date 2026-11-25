@@ -35,5 +35,21 @@
   "turkiyeden-idxal-marsrutlar-ve-senedler": ["logistika-xidmetleri"],
   "muveqqeti-saxlanma-ve-gomruk-anbari": ["yuklerin-catdirilmasi"],
   "malin-tesnifati-mubahise-olunanda": ["konsaltinq-xidmeti"],
-  "yuk-sigortasi-ve-gomruk-deyeri": ["logistika-xidmetleri"]
+  "yuk-sigortasi-ve-gomruk-deyeri": ["logistika-xidmetleri"],
+
+  "_comment2": "25.11.2026 — Dövlət Gömrük Komitəsinin videolu sual-cavab səhifələri. Onların heç biri bu xəritədə yox idi, yəni saytın ƏN ÇOX GÖSTƏRİLƏN ünvanlarında mövzuya uyğun keçid blokunun özü çıxmırdı. Blok gövdədən asılı deyil (bax xeber.php), ona görə gövdəsi hələ yazılmayan səhifələrdə də dərhal işləyir.",
+
+  "baglamalarin-xarici-anbarda-saxlanilma-muddeti-ne-qederdir": ["yuklerin-catdirilmasi", "logistika-xidmetleri"],
+  "buraxilisi-dayandirilan-baglamaya-gore-vetendas-gomruk-orqanina-yaxinlasa-bilmedikde-ne-etmelidir": ["gomruk-beyannameleri", "konsaltinq-xidmeti"],
+  "dini-teyinatli-edebiyyata-azerbaycan-respublikasinin-gomruk-serhedinden-kecirilerken-hansi-dovlet-orqani-terefinden-verilen-icaze-senedi-teleb-olunur": ["sertifikatlar-ve-icazeler"],
+  "fiziki-sexsler-terefinden-musayiet-olunmayan-baqajda-getirilen-ve-aparilan-mallara-dair-gomruk-beyannamesi-hansi-muddetde-verilmelidir": ["gomruk-beyannameleri", "yuklerin-catdirilmasi"],
+  "gomruk-beyannamesi-hansi-halda-legv-edile-biler": ["gomruk-beyannameleri"],
+  "gomruk-borcu-hansi-muddetde-odenilmelidir": ["gomruk-beyannameleri"],
+  "gomruk-borcunun-odenilmesine-gore-mesul-sexs-kimdir": ["gomruk-beyannameleri", "konsaltinq-xidmeti"],
+  "hansi-hallarda-qisa-idxal-beyannamesinde-duzelisler-aparilmasina-yol-verilmir": ["gomruk-beyannameleri"],
+  "her-bir-fiziki-sexs-gomruk-odenislerine-celb-edilmeden-olke-erazisine-ne-qeder-qizil-getire-biler": ["gomruk-beyannameleri"],
+  "mallarin-daxilde-emal-xususi-gomruk-proseduru-altinda-yerlesdirilmesi-ucun-sertler-hansilardir": ["konsaltinq-xidmeti", "gomruk-beyannameleri"],
+  "mallarin-gomruk-ekspertizasi-neye-asasen-aparilir": ["konsaltinq-xidmeti"],
+  "mobil-telefonlarin-gomruk-deyeri-nece-mueyyenlesir": ["gomruk-beyannameleri", "konsaltinq-xidmeti"],
+  "xaricden-sifaris-etdiyim-baglamanin-harada-oldugunu-nece-izleye-bilerem": ["yuklerin-catdirilmasi"]
 }

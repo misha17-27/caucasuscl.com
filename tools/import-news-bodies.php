@@ -11,9 +11,18 @@
  * `video` ilə `question` sütunlarını BOŞALDIR. Dövlət Gömrük Komitəsindən
  * təkrar dərc olunan video səhifələrində isə məhz həmin iki sütun dəyərlidir:
  * sual mətni və YouTube identifikatoru. Ona görə bu skript YALNIZ `body`
- * (və açıq verilibsə `excerpt`, `meta_title`, `meta_desc`) sütununu yeniləyir.
- * `title`, `slug`, `tkey`, `video`, `question`, `sort`, `image`, `is_own`,
- * `visible` TOXUNULMUR.
+ * (və açıq verilibsə `excerpt`, `meta_title`, `meta_desc`, `question`)
+ * sütununu yeniləyir. `title`, `slug`, `tkey`, `video`, `sort`, `image`,
+ * `is_own`, `visible` TOXUNULMUR.
+ *
+ * `question` haqqında: o, bu səhifələrin ən dəyərli sütunudur, ona görə
+ * BOŞALDILA BİLMƏZ — JSON-da `question` yoxdursa və ya boşdursa, bazadaki
+ * dəyər olduğu kimi qalır; yalnız açıq yazılmış düzəliş keçir. 25.11.2026-da
+ * buna ehtiyac yarandı: `mallarin-gomruk-ekspertizasi...` səhifəsində sual
+ * mətni İKİ DƏFƏ yazılmışdı və ortasında «Sual:» etiketi qalmışdı, yəni canlı
+ * səhifə sualı iki dəfə göstərirdi (`<b>Sual</b>` başlığı onsuz da şablondadır).
+ * Eyni təkrar `excerpt` və `meta_desc`-ə də düşmüşdü — axtarış nəticəsindəki
+ * təsvir də iki dəfə eyni cümlə idi.
  *
  * Gövdədəki keçidlər açarla yazılır və hər dilin real ünvanına çevrilir:
  *   [mətn](SVC:<xidmətin tkey-i>)   -> /xidmetler/<həmin dilin slug-ı>/
@@ -150,8 +159,20 @@ foreach ($data['pages'] as $p) {
         if ($words < 220) $errors[] = "$slug/$l: gövdə qısadır ($words söz)";
         if ($words > 700) $errors[] = "$slug/$l: gövdə uzundur ($words söz)";
 
+        /* Şablon sualın üstündə onsuz da «Sual» başlığı çap edir, ona görə
+           mətnin içində etiket olmamalıdır — düzəltdiyimiz nasazlığın
+           yenidən girməsinin maşın yoxlaması. */
+        foreach (['question' => 'sual', 'excerpt' => 'çıxarış'] as $k => $ad) {
+            $v = trim((string)($t[$k] ?? ''));
+            if ($v !== '' && preg_match('~\b(Sual|Вопрос|Question)\s*:~ui', $v))
+                $errors[] = "$slug/$l: $ad mətninin içində «Sual:» etiketi var";
+        }
+
         $set = ['body' => $body];
-        foreach (['excerpt' => 'excerpt', 'metaTitle' => 'meta_title', 'metaDesc' => 'meta_desc'] as $k => $col) {
+        /* `question` burada ancaq AÇIQ verildikdə dəyişir; boş buraxılsa
+           bazadaki dəyər qalır (bax faylın başındaki şərh). */
+        foreach (['excerpt' => 'excerpt', 'metaTitle' => 'meta_title',
+                  'metaDesc' => 'meta_desc', 'question' => 'question'] as $k => $col) {
             $v = trim((string)($t[$k] ?? ''));
             if ($v !== '') $set[$col] = $v;
         }
