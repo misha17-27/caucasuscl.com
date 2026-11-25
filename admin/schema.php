@@ -45,9 +45,14 @@ function cms_ensure_column(PDO $db, string $table, string $col, string $ddl): bo
             foreach ($db->query("PRAGMA table_info(`$table`)") as $c)
                 if (strcasecmp((string)$c['name'], $col) === 0) { $have = true; break; }
         } else {
-            $st = $db->prepare("SHOW COLUMNS FROM `$table` LIKE ?");
-            $st->execute([$col]);
-            $have = (bool)$st->fetch();
+            /* `SHOW COLUMNS … LIKE ?` İŞLƏMİR: admin/db.php-də
+               PDO::ATTR_EMULATE_PREPARES = false, MySQL-in doğma hazırlanmış
+               sorğuları isə SHOW əmrində yer tutucu qəbul etmir — istisna atılır
+               və funksiya səssizcə `false` qaytarırdı. 25.11.2026-da serverdə
+               məhz bu baş verdi: birbaşa ALTER işləyirdi, funksiya isə yox.
+               Ona görə parametr ümumiyyətlə işlədilmir, sətirlər sadalanır. */
+            foreach ($db->query("SHOW COLUMNS FROM `$table`") as $c)
+                if (strcasecmp((string)($c['Field'] ?? ''), $col) === 0) { $have = true; break; }
         }
         if (!$have) $db->exec("ALTER TABLE `$table` ADD COLUMN `$col` $ddl");
         return $done[$key] = true;
