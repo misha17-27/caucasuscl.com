@@ -256,7 +256,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 'is_own' => isset($_POST['is_own']) ? 1 : 0,
                 'image' => news_cover_path($_POST['image'] ?? ''),
                 'lang' => $L,
+                /* Məzmunun dəyişdiyi tarix — sitemap `lastmod` bundan qidalanır.
+                   `pub_date` toxunulmur: o, oxucuya göstərilən dərc tarixidir. */
+                'updated_at' => date('Y-m-d'),
             ];
+            /* Sütun köhnə bazalarda olmaya bilər — ilk saxlamada özü yaranır. */
+            if (!cms_ensure_news_updated($db)) unset($f['updated_at']);
             if ($p = admin_upload('image_file')) $f['image'] = $p;
             if ($f['slug'] === '') { flash('Slug обязателен.', 'err'); redirect('index.php?section=news&lang=' . $L); }
             // tam YouTube linki yapışdırılıbsa — ID-ni çıxarırıq

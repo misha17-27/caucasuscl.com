@@ -70,8 +70,17 @@ foreach (array_keys($SERVICES) as $slug) {
     $entries[] = ['canon' => '/xidmetler/' . $slug, 'date' => ''];
 }
 foreach ($NEWS as $slug => $n) {
-    /* xəbərlərdə real dərc tarixi var — Google lastmod-u nəzərə alır */
-    $entries[] = ['canon' => '/xeberler/' . $slug, 'date' => (string)($n['date'] ?? '')];
+    /* `lastmod` MƏZMUNUN DƏYİŞDİYİ tarixdir, dərc tarixi deyil.
+       25.11.2026-a qədər burada `pub_date` verilirdi və bu, yalan siqnal idi:
+       həmin gün tam yenidən yazılmış səhifələr sitemap-da hələ də 2023-cü ili
+       göstərirdi, yəni sitemap Google-a «burada heç nə dəyişməyib» deyirdi —
+       halbuki Google yenidən oxumağa məhz `lastmod`-a baxaraq qərar verir.
+       `pub_date` səhifədə oxucuya göstərilir və toxunulmur; dəyişmə tarixi
+       ayrıca sütundadır (bax admin/schema.php → cms_ensure_news_updated).
+       Sütun yoxdursa və ya boşdursa dərc tarixinə qayıdırıq. */
+    $upd = trim((string)($n['updated'] ?? ''));
+    $entries[] = ['canon' => '/xeberler/' . $slug,
+                  'date'  => $upd !== '' ? $upd : (string)($n['date'] ?? '')];
 }
 
 /* ---------- çap ---------- */

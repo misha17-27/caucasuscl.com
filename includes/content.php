@@ -255,6 +255,9 @@ try {
                 'meta_desc'  => (string)($r['meta_desc'] ?? ''),
                 'is_own'     => (int)($r['is_own'] ?? 0),
                 'image'      => $img,
+                /* Məzmunun dəyişdiyi tarix. Köhnə bazalarda sütun olmaya
+                   bilər, ona görə `?? ''` — sayt onsuz da işləməlidir. */
+                'updated'    => (string)($r['updated_at'] ?? ''),
             ];
         }
     }

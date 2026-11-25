@@ -50,6 +50,9 @@ $data = json_decode((string)file_get_contents($file), true);
 if (!is_array($data['pages'] ?? null)) exit("JSON oxunmadı və ya `pages` yoxdur: $file\n");
 
 $db  = require $ROOT . '/admin/db.php';
+require_once $ROOT . '/admin/schema.php';
+/* `updated_at` köhnə bazalarda yoxdur — ilk işləmədə özü yaranır. */
+$HAS_UPDATED = cms_ensure_news_updated($db);
 echo 'Baza: ' . $db->getAttribute(PDO::ATTR_DRIVER_NAME) . ($dry ? '   (DRY RUN)' : '') . "\n\n";
 
 $LANGS  = ['az', 'ru', 'en'];
@@ -99,6 +102,10 @@ foreach ($data['pages'] as $p) {
         $set = [];
         if ($cur['title'] !== $title)             $set['title'] = $title;
         if ($meta !== '' && $cur['meta'] !== $meta) $set['meta_title'] = $meta;
+        /* Başlıq da məzmundur — dəyişibsə, sitemap `lastmod` yenilənməlidir.
+           Heç nə dəyişməyibsə tarixə toxunmuruq, yoxsa hər işləmə saxta
+           «yeniləndi» siqnalı verərdi. */
+        if ($set && $HAS_UPDATED) $set['updated_at'] = date('Y-m-d');
 
         $rows[] = ['id' => $cur['id'], 'slug' => $slug, 'lang' => $l, 'set' => $set,
                    'old' => $cur['title'], 'new' => $title];

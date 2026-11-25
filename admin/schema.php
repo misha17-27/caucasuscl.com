@@ -18,6 +18,57 @@ function cms_pk(PDO $db): string {
         : 'id INT AUTO_INCREMENT PRIMARY KEY';
 }
 
+/**
+ * Çatışmayan sütunu əlavə edir — SQLite və MySQL üçün.
+ *
+ * NİYƏ LAZIMDIR: layihədə miqrasiya mexanizmi yoxdur, yeni sütun isə həm
+ * yerli SQLite-da, həm serverdəki MySQL-də peyda olmalıdır. Serverdə CLI
+ * yoxdur (bax [[caucasuscl-deploy]]), yəni hər dəfə birdəfəlik örtük
+ * qaldırmaq lazım gələrdi. Bunun əvəzinə sütun ilk yazı zamanı özü yaranır.
+ *
+ * Təhlükəsizlik: cədvəl və sütun adları yalnız koddan gəlir, buna baxmayaraq
+ * şablonla yoxlanılır. Xəta halında `false` qaytarır və SUSUR — sütunun
+ * olmaması saytı dayandırmamalıdır (oxuyan yerlər `?? ''` ilə yazılıb).
+ */
+function cms_ensure_column(PDO $db, string $table, string $col, string $ddl): bool {
+    static $done = [];
+    $key = $table . '.' . $col;
+    if (isset($done[$key])) return $done[$key];
+    $done[$key] = false;
+
+    if (!preg_match('~^[a-z_][a-z0-9_]*$~i', $table) || !preg_match('~^[a-z_][a-z0-9_]*$~i', $col)) {
+        return false;
+    }
+    try {
+        $have = false;
+        if (cms_is_sqlite($db)) {
+            foreach ($db->query("PRAGMA table_info(`$table`)") as $c)
+                if (strcasecmp((string)$c['name'], $col) === 0) { $have = true; break; }
+        } else {
+            $st = $db->prepare("SHOW COLUMNS FROM `$table` LIKE ?");
+            $st->execute([$col]);
+            $have = (bool)$st->fetch();
+        }
+        if (!$have) $db->exec("ALTER TABLE `$table` ADD COLUMN `$col` $ddl");
+        return $done[$key] = true;
+    } catch (Throwable $e) {
+        return false;
+    }
+}
+
+/**
+ * Xəbərin məzmununun DƏYİŞDİYİ tarix üçün sütunu təmin edir.
+ *
+ * `pub_date` dərc tarixidir və səhifədə görünür — ona toxunmaq olmaz.
+ * Lakin sitemap `lastmod`-u məhz ondan götürürdü, yəni 25.11.2026-da tam
+ * yenidən yazılmış səhifələr Google-a «2023-cü ildən bəri dəyişməyib» kimi
+ * təqdim olunurdu. Google yenidən oxumağa məhz `lastmod`-a baxaraq qərar
+ * verir, yəni siqnal YALAN idi. İndi ayrıca sütun var.
+ */
+function cms_ensure_news_updated(PDO $db): bool {
+    return cms_ensure_column($db, 'news', 'updated_at', "VARCHAR(20) DEFAULT ''");
+}
+
 function cms_create_tables(PDO $db): array {
     $pk   = cms_pk($db);
     $suf  = cms_is_sqlite($db) ? '' : ' ENGINE=InnoDB DEFAULT CHARSET=utf8mb4';
@@ -69,6 +120,10 @@ function cms_create_tables(PDO $db): array {
             `meta_desc` TEXT,
             `is_own` INT DEFAULT 0,
             `image` VARCHAR(255) DEFAULT '',
+            /* məzmunun dəyişdiyi tarix — sitemap `lastmod` üçün.
+               `pub_date` dərc tarixidir və səhifədə görünür, ona görə ayrıdır.
+               Mövcud bazalarda cms_ensure_news_updated() əlavə edir. */
+            `updated_at` VARCHAR(20) DEFAULT '',
             UNIQUE (`lang`, `slug`)",
 
         'clients' => "$pk, `name` VARCHAR(160) DEFAULT '', `image` VARCHAR(255) DEFAULT '', `url` VARCHAR(255) DEFAULT '', `sort` INT DEFAULT 0",

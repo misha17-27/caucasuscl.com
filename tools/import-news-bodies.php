@@ -65,6 +65,9 @@ $data = json_decode((string)file_get_contents($file), true);
 if (!is_array($data['pages'] ?? null)) exit("JSON oxunmadı və ya `pages` yoxdur: $file\n");
 
 $db  = require $ROOT . '/admin/db.php';
+require_once $ROOT . '/admin/schema.php';
+/* `updated_at` köhnə bazalarda yoxdur — ilk işləmədə özü yaranır. */
+$HAS_UPDATED = cms_ensure_news_updated($db);
 $drv = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
 echo "Baza: $drv" . ($dry ? '   (DRY RUN)' : '') . "\n\n";
 
@@ -169,6 +172,9 @@ foreach ($data['pages'] as $p) {
         }
 
         $set = ['body' => $body];
+        /* Məzmun dəyişdi — sitemap `lastmod` üçün tarix yazılır. `pub_date`
+           TOXUNULMUR: o, oxucuya göstərilən dərc tarixidir. */
+        if ($HAS_UPDATED) $set['updated_at'] = date('Y-m-d');
         /* `question` burada ancaq AÇIQ verildikdə dəyişir; boş buraxılsa
            bazadaki dəyər qalır (bax faylın başındaki şərh). */
         foreach (['excerpt' => 'excerpt', 'metaTitle' => 'meta_title',

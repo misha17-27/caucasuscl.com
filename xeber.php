@@ -47,7 +47,11 @@ $page_ld = [
         'headline'         => clip_words((string)$n['title'], 110),
         'description'      => excerpt((string)$n['excerpt'], 300),
         'datePublished'    => (string)$n['date'],
-        'dateModified'     => (string)$n['date'],
+        /* `dateModified` dərc tarixi ilə eyni yazılırdı — yəni nişan da
+           «heç vaxt redaktə olunmayıb» deyirdi. İndi məzmunun dəyişdiyi
+           tarix verilir, yoxdursa dərc tarixinə qayıdır. */
+        'dateModified'     => trim((string)($n['updated'] ?? '')) !== ''
+                                ? (string)$n['updated'] : (string)$n['date'],
         'inLanguage'       => LANG,
         'image'            => [og_image($__cover)['url']],
         'author'           => ['@id' => site_origin() . '/#org'],
